@@ -23,7 +23,7 @@ function usage()
 {
 	echo "usage: `basename $0`"
 	echo "  -r root directory path to build image								"
-	echo "  -c builded image copy to directory, default current					"
+	echo "  -c copy to directory for builded image, default current				"
 	echo "  -n builded image name, default image.img							"
 	echo "  -s image size, default 16384KB (unit KB)							"
 #	echo "  -l set loop device   (default loop1) 								"
@@ -221,7 +221,7 @@ function build_image()
 			user=$(id | sed 's/^uid=//;s/(.*$//')
 			mount_cmd="mount -t vfat -o rw,uid=$user,gid=$user";;
 	*)
-		echo " FAIL: not support format (ext2, ext4, fat16, fat32)"
+		echo " FAIL: '$fs_format' not support format (ext2, ext4, vfat, fat16, fat32)"
 		exit 1;;
 		esac
 
