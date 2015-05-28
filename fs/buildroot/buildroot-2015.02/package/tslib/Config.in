@@ -8,3 +8,22 @@ config BR2_PACKAGE_TSLIB
 
 comment "tslib needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
+
+if BR2_PACKAGE_TSLIB
+
+choice
+	prompt "touch point type"
+	default BR2_PACKAGE_TSLIB_LEGACY
+
+config BR2_PACKAGE_TSLIB_LEGACY
+	bool "single point"
+	help
+		None.
+
+config BR2_PACKAGE_TSLIB_MULTI
+	bool "multiple point"
+	help
+		None.
+endchoice
+
+endif
