@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# build file systems
+# build ramdisk image
+#
 
 # command-line settable variables
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# build file systems
+# br.rfs.sh : buildroot's build scriptor
+# build rootfs files in out dir
 
 # command-line settable variables
 
