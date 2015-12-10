@@ -5,7 +5,7 @@ OBJS 	= BOOT_BINGEN_NAND.o
 SRCS 	= $(OBJS:.o=.c)
 
 all : $(TARGET)
-	$(CC) $(SRCS) -o $(TARGET)
+	$(CC) $(SRCS) -O2 -o $(TARGET)
 	
 .c.o:
 	$(CC) $<

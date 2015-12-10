@@ -41,7 +41,7 @@
 #include "GEN_NANDBOOTEC.h"
 #include "nx_bingen.h"
 
-#define	VERSION_STR	"0.9.9"
+#define	VERSION_STR	"1.0.0 (20151125)"
 
 
 /* PRINT MACRO */
@@ -79,6 +79,7 @@ struct build_info {
 	uint32_t				dev_readaddr;
 	int						image_type;
 	unsigned int			page_size;
+	unsigned int			max_2ndboot;
 };
 typedef struct build_info build_info_t;
 
@@ -232,7 +233,7 @@ static int update_bootinfo(unsigned char *parsed_nsih, const build_info_t *BUILD
 	bootinfo->SIGNATURE			= HEADER_ID;
 	bootinfo->DBI.NANDBI.CRC32	= crc;
 
-	pr_debug ("bootinfo sz: %d loadaddr: 0x%x, launchaddr 0x%x, crc: 0x%x\n",
+	pr_debug("bootinfo sz: %d loadaddr: 0x%x, launchaddr 0x%x, crc: 0x%x\n",
 		bootinfo->LOADSIZE, bootinfo->LOADADDR, bootinfo->LAUNCHADDR, crc);
 
 	return 0;
@@ -293,7 +294,7 @@ static int merge_nsih_secondboot(const char *in_file, const char *out_file, cons
 	ret = ProcessNSIH (BUILD_INFO->nsih_file, out_buf);
 	if (ret != NSIH_BIN_SIZE)
 	{
-		pr_error ("NSIH Parsing failed.\n");
+		pr_error("NSIH Parsing failed.\n");
 		ret = -1;
 		goto ERROR_EXIT;
 	}
@@ -303,7 +304,7 @@ static int merge_nsih_secondboot(const char *in_file, const char *out_file, cons
 	read_size = fread( out_buf + NSIH_BIN_SIZE, 1, in_file_size, in_fd );
 	if( read_size != in_file_size )
 	{
-		pr_error ("File read error.\n");
+		pr_error("File read error.\n");
 		ret = -1;
 		goto ERROR_EXIT;
 	}
@@ -330,7 +331,7 @@ static int merge_nsih_secondboot(const char *in_file, const char *out_file, cons
 	write_size = fwrite( out_buf, 1, out_buf_size, out_fd );
 	if( write_size != out_buf_size )
 	{
-		pr_error ("Out file write failed.\n");
+		pr_error("Out file write failed.\n");
 		ret = -1;
 		goto ERROR_EXIT;
 	}
@@ -357,7 +358,7 @@ ERROR_EXIT:
 //
 //	-- first stage --
 //
-static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUILD_INFO)
+static int first_stage(FILE *eccgen_fp, const char *in_file, build_info_t *BUILD_INFO)
 {
 	FILE	*bin_fp = NULL, *merge_fp = NULL;
 	unsigned int BinFileSize, MergeFileSize, SrcLeft, SrcReadSize, DstSize, DstTotalSize;
@@ -368,6 +369,7 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 	unsigned long copy_leftlen	= 0;
 	unsigned long merged_size	= 0;
 	int is_2ndboot				= (BUILD_INFO->image_type) == BUILD_2NDBOOT ? 1 : 0;
+	unsigned int max_2ndboot	= BUILD_INFO->max_2ndboot;
 	unsigned int align;
 	int crc = 0;
 
@@ -380,16 +382,16 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 
 	//--------------------------------------------------------------------------
 	// BIN processing
-	bin_fp = fopen (in_file, "rb");
+	bin_fp = fopen(in_file, "rb");
 	if (!bin_fp)
 	{
-		pr_error ("ERROR : Failed to open %s file.\n", in_file);
+		pr_error("ERROR : Failed to open %s file.\n", in_file);
 		ret = -1;
 		goto out;
 	}
 
 	BinFileSize = get_file_size (bin_fp);
-	pr_debug ("[Merge Stage] BinFileSize : %d\n", BinFileSize);
+	pr_debug("[Merge Stage] BinFileSize : %d\n", BinFileSize);
 
 
 
@@ -398,18 +400,17 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 	sz = (is_2ndboot) ? NSIH_LEN : iSectorSize;
 
 	/* get MergeFileSize */
-	align = (is_2ndboot) ? MAX_2NDBOOT : BUILD_INFO->page_size;
+	align = (is_2ndboot) ? max_2ndboot : BUILD_INFO->page_size;
 
 
 	/* prepare merge buffer */
 	MergeFileSize = ALIGN(BinFileSize + sz, align);
 	BinFileSize_align = ALIGN(BinFileSize, sz);
-	pr_debug ("MergeFileSize: %u, BinFileSize aligned: %u\n", MergeFileSize, BinFileSize_align);
+	pr_debug("MergeFileSize: %u, BinFileSize aligned: %u\n", MergeFileSize, BinFileSize_align);
 
-	merge_buffer = malloc (MergeFileSize);
-	if (!merge_buffer)
-	{
-		pr_error ("Not enough memory. (merge)\n");
+	merge_buffer = malloc(MergeFileSize);
+	if (!merge_buffer) {
+		pr_error("Not enough memory. (merge)\n");
 		ret = -1;
 		goto out;
 	}
@@ -421,7 +422,7 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 	ret = ProcessNSIH (BUILD_INFO->nsih_file, merge_buffer);
 	if (ret != NSIH_LEN)
 	{
-		pr_error ("NSIH Parsing failed.\n");
+		pr_error("NSIH Parsing failed.\n");
 		ret = -1;
 		goto out;
 	}
@@ -431,7 +432,7 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 	read_size = fread (merge_buffer + sz, 1, BinFileSize, bin_fp);
 	if( read_size != BinFileSize )
 	{
-		pr_error ("File read error.\n");
+		pr_error("File read error.\n");
 		ret = -1;
 		goto out;
 	}
@@ -473,13 +474,13 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 
 	rewind (merge_fp);
 
-	if (is_2ndboot && MergeFileSize > MAX_2NDBOOT)
+	if (is_2ndboot && MergeFileSize > max_2ndboot)
 	{
-		printf ("WARNING : %s is too big for Second boot image, only will used first %d bytes.\n", in_file, MAX_2NDBOOT);
-		MergeFileSize = MAX_2NDBOOT;
+		printf ("WARNING : %s is too big for Second boot image, only will used first %d bytes.\n", in_file, max_2ndboot);
+		MergeFileSize = max_2ndboot;
 	}
 
-	pr_debug ("iSectorSize: %d\n", iSectorSize);
+	pr_debug("iSectorSize: %d\n", iSectorSize);
 
 	iNX_BCH_VAR_K		=	(iSectorSize * 8);
 
@@ -513,7 +514,7 @@ static int first_stage (FILE *eccgen_fp, const char *in_file, build_info_t *BUIL
 	{
 		size_t sz;
 		SrcReadSize = (SrcLeft > (iSectorSize*7)) ? (iSectorSize*7) : SrcLeft;
-		pr_debug ("SrcLeft: 0x%x, SrcReadSize: 0x%x\n", SrcLeft, SrcReadSize);
+		pr_debug("SrcLeft: 0x%x, SrcReadSize: 0x%x\n", SrcLeft, SrcReadSize);
 		sz = fread (pdwSrcData, 1, SrcReadSize, merge_fp);
 		SrcLeft -= SrcReadSize;
 		DstSize = MakeECCChunk (pdwSrcData, pdwDstData, SrcReadSize);
@@ -563,14 +564,14 @@ static int second_stage(const char *out_file, FILE *eccgen_fp, const build_info_
 
 	/* buffer allocation */
 	page_size = payload_in_page = BUILD_INFO->page_size;
-	copy_buffer = malloc (page_size);
+	copy_buffer = malloc(page_size);
 	if (!copy_buffer)
 	{
 		ret = -10;
 		goto err;
 	}
 
-	out_fp = fopen (out_file, "wb");
+	out_fp = fopen(out_file, "wb");
 	if (!out_fp) {
 		ret = -20;
 		goto err_out_fp;
@@ -580,12 +581,12 @@ static int second_stage(const char *out_file, FILE *eccgen_fp, const build_info_
 	/* size calc. */
 	rewind (eccgen_fp);
 	BinFileSize = get_file_size (eccgen_fp);
-	pr_debug ("[ECCGEN Stage] BinFileSize: %d\n", BinFileSize);
+	pr_debug("[ECCGEN Stage] BinFileSize: %d\n", BinFileSize);
 
 	if (BUILD_INFO->image_type == BUILD_2NDBOOT)
 		payload_in_page = MIN (payload_in_page, ROMBOOT_MAXPAGE);
 	copy_count = DIV_ROUND_UP (BinFileSize, payload_in_page);
-	pr_debug ("payload: %d, page: %d, copy_count: %d\n", payload_in_page, page_size, copy_count);
+	pr_debug("payload: %d, page: %d, copy_count: %d\n", payload_in_page, page_size, copy_count);
 
 
 	/* file writing */
@@ -609,28 +610,27 @@ err:
 //
 //////////////////////////////////////////////////////////////////////////////
 
-static int make_image (const char *out_file, const char *in_file, build_info_t *BUILD_INFO)
+static int make_image(const char *out_file, const char *in_file, build_info_t *BUILD_INFO)
 {
 	int ret;
 	FILE *eccgen_fp;
 
 	eccgen_fp = tmpfile();
-	if (!eccgen_fp)
-	{
-		pr_error ("Cannot generate temporary file. Abort.\n");
+	if (!eccgen_fp) {
+		pr_error("Cannot generate temporary file. Abort.\n");
 		goto done;
 	}
 
-	ret = first_stage  (eccgen_fp, in_file, BUILD_INFO);
+	ret = first_stage(eccgen_fp, in_file, BUILD_INFO);
 	if (ret < 0)
 		goto done;
 	
-	ret = second_stage (out_file, eccgen_fp, BUILD_INFO);
+	ret = second_stage(out_file, eccgen_fp, BUILD_INFO);
 	if (ret < 0)
 		return -1;
 
 done:
-	fclose (eccgen_fp);
+	fclose(eccgen_fp);
 	return ret;
 }
 
@@ -644,16 +644,17 @@ void print_usage(char *argv[])
 	printf("version     : %s, %s, %s\n", VERSION_STR, __DATE__, __TIME__);
 	printf("\n");
 	printf("usage: options\n");
-	printf(" -h help                                                       \n");
-	printf(" -t image type, 2ndboot|bootloader (mandatory)                 \n");
-	printf(" -d device type, nand|other        (mandatory)                 \n");
-	printf(" -i input file name                (mandatory)                 \n");
-	printf(" -o output file name               (mandatory)                 \n");
-	printf(" -n nsih file name                 (mandatory)                 \n");
-	printf(" -a device read address            (optional, default NSIH.txt)\n");
-	printf(" -p page size  (KiB)               (optional, nand only, default %d )    \n", ROMBOOT_MAXPAGE);
-	printf(" -l load address                   (optional, default 0x%08x )\n", DEFAULT_LOADADDR);
-	printf(" -e launch address                 (optional, default 0x%08x )\n", DEFAULT_LAUNCHADDR);
+	printf(" -h help                                                           \n");
+	printf(" -t image type, 2ndboot|bootloader     (mandatory)                 \n");
+	printf(" -d device type, nand|other            (mandatory)                 \n");
+	printf(" -i input file name                    (mandatory)                 \n");
+	printf(" -o output file name                   (mandatory)                 \n");
+	printf(" -n nsih file name                     (mandatory)                 \n");
+	printf(" -m machine, s5p4418|s5p6818|aarch64   (default s5p4418) \n");
+	printf(" -a device read address                (optional, default NSIH.txt)\n");
+	printf(" -p page size  (KiB)                   (optional, nand only, default %d )\n", ROMBOOT_MAXPAGE);
+	printf(" -l load address                       (optional, default 0x%08x )\n", DEFAULT_LOADADDR);
+	printf(" -e launch address                     (optional, default 0x%08x )\n", DEFAULT_LAUNCHADDR);
 	printf("\nExample: nand image\n");
 	printf(" %s -t 2ndboot -d nand -o nand_2ndboot.bin -i pyrope_2ndboot_nand.bin -n NSIH.txt -p 4096 -l 0x40c00000 -e 0x40c00000 \n", argv[0]);
 	printf(" %s -t bootloader -d nand -o nand_bootloader.bin -i u-boot.bin -n NSIH.txt -p 4096 -l 0x40c00000 -e 0x40c00000 \n", argv[0]);
@@ -668,21 +669,23 @@ void print_usage(char *argv[])
 
 //------------------------------------------------------------------------------
 
-int main (int argc, char** argv)
+int main(int argc, char** argv)
 {
 	build_info_t BUILD_INFO;
 
-	uint32_t sector_size	= 0;
-	uint32_t dev_readaddr	= 0;
-	unsigned int page_size	= ROMBOOT_MAXPAGE;
-	uint32_t loadaddr		= DEFAULT_LOADADDR;
-	uint32_t launchaddr		= DEFAULT_LAUNCHADDR;
+	uint32_t sector_size		= 0;
+	uint32_t dev_readaddr		= 0;
+	unsigned int page_size		= ROMBOOT_MAXPAGE;
+	unsigned int max_2ndboot	= 0;
+	uint32_t loadaddr			= DEFAULT_LOADADDR;
+	uint32_t launchaddr			= DEFAULT_LAUNCHADDR;
 
 	char *bin_type = NULL;
 	char *dev_type = NULL;
 	char *out_file = NULL;
 	char *in_file = NULL;
 	char *nsih_file = NULL;
+	char *machine = "s5p4418";
 	int image_type = BUILD_NONE;
 	int device_type = DEVICE_NONE;
 
@@ -690,26 +693,28 @@ int main (int argc, char** argv)
 
 
 	// arguments parsing 
-	while (-1 != (opt = getopt(argc, argv, "ht:d:o:i:n:a:p:l:e:"))) {
+	while (-1 != (opt = getopt(argc, argv, "ht:d:o:i:n:a:p:l:e:m:"))) {
 		switch(opt) {
 			case 't':
-				bin_type = optarg; break;
+				bin_type		= optarg; break;
 			case 'd':
-				dev_type = optarg; break;
+				dev_type		= optarg; break;
 			case 'o':
-				out_file = optarg; break;
+				out_file		= optarg; break;
 			case 'i':
-				in_file = optarg; break;
+				in_file			= optarg; break;
 			case 'n':
-				nsih_file = optarg; break;
+				nsih_file		= optarg; break;
 			case 'a':
-				dev_readaddr = strtoul (optarg, NULL, 16); break;
+				dev_readaddr	= strtoul(optarg, NULL, 16); break;
 			case 'p':
-				page_size = strtoul (optarg, NULL, 10); break;
+				page_size		= strtoul(optarg, NULL, 10); break;
 			case 'l':
-				loadaddr = strtoul (optarg, NULL, 16); break;
+				loadaddr		= strtoul(optarg, NULL, 16); break;
 			case 'e':
-				launchaddr = strtoul (optarg, NULL, 16); break;
+				launchaddr		= strtoul(optarg, NULL, 16); break;
+			case 'm':
+				machine			= optarg; break;
 			case 'h':
 			default:
 				print_usage(argv); exit(0); break;
@@ -724,15 +729,26 @@ int main (int argc, char** argv)
 		return -1;
 	}
 
-	if (!strcmp (in_file, out_file))
+	if (!strcmp(in_file, out_file))
 	{
-		pr_error ("Input file name is equal to output file name.\n");
+		pr_error("Input file name is equal to output file name.\n");
+		return -1;
+	}
+
+	if (!strcmp(machine, "s5p4418")) {
+		max_2ndboot = 0x4000;		/* 16 KB */
+	}
+	else if(!strcmp(machine, "s5p6818") || !strcmp(machine, "aarch64")) {
+		max_2ndboot = 0x10000;		/* 64 KB */
+	}
+	else {
+		pr_error("invalid machine. check your machine parameter\n");
 		return -1;
 	}
 
 	if (page_size < 512 || !IS_POWER_OF_2 (page_size))
 	{
-		pr_error ("Page size must bigger than 512 and must power-of-2\n");
+		pr_error("Page size must bigger than 512 and must power-of-2 (input: %u)\n", page_size);
 		return -1;
 	}
 
@@ -741,10 +757,9 @@ int main (int argc, char** argv)
 		image_type = BUILD_2NDBOOT;
 	else if(!strcmp(bin_type, "bootloader"))
 		image_type = BUILD_BOOTLOADER;
-	pr_debug ("build type : %d\n", image_type);
-	if (image_type == BUILD_NONE)
-	{
-		pr_error ("Enter 2ndboot or bootloader\n");
+	pr_debug("build type : %d\n", image_type);
+	if (image_type == BUILD_NONE) {
+		pr_error("Enter 2ndboot or bootloader\n");
 		return -1;
 	}
 
@@ -753,31 +768,27 @@ int main (int argc, char** argv)
 		device_type = DEVICE_NAND;
 	if (!strcmp(dev_type, "other"))
 		device_type = DEVICE_OTHER;
-	pr_debug ("device type : %d\n", device_type);
-	if (device_type == DEVICE_NONE)
-	{
-		pr_error ("Enter nand or other\n");
+	pr_debug("device type : %d\n", device_type);
+	if (device_type == DEVICE_NONE) {
+		pr_error("Enter nand or other\n");
 		return -1;
 	}
 
 	// if( device_type==DEVICE_OTHER && image_type!=BUILD_2NDBOOT )
 	// {
-	// 	pr_error ("Other device support only second boot mode.\n");
+	// 	pr_error("Other device support only second boot mode.\n");
 	// 	return -1;
 	// }
 
-	if( device_type == DEVICE_NAND )
-	{
+	if (device_type == DEVICE_NAND) {
 		// get sector size
 		sector_size = (page_size < 1024) ? 512 : 1024;
-		if (sector_size == 512)
-		{
+		if (sector_size == 512) {
 			iSectorSize			=	512;
 			iNX_BCH_VAR_T		=	24;
 			iNX_BCH_VAR_M		=	13;
 		}
-		else if (sector_size == 1024)
-		{
+		else if (sector_size == 1024) {
 			iSectorSize			=	1024;
 			iNX_BCH_VAR_T		=	60;
 			iNX_BCH_VAR_M		=	14;
@@ -791,10 +802,12 @@ int main (int argc, char** argv)
 	BUILD_INFO.image_type = image_type;
 	BUILD_INFO.dev_readaddr = dev_readaddr;
 	BUILD_INFO.page_size = page_size;
+	BUILD_INFO.max_2ndboot = max_2ndboot;
 
 
 	printf("\n==============================================================================\n");
 	printf(" Type        : %s\n", bin_type);
+	printf(" Machine     : %s\n", machine);
 	printf(" Device      : %s\n", dev_type);
 	printf(" Input       : %s\n", in_file);
 	printf(" Output      : %s\n", out_file);
@@ -810,9 +823,9 @@ int main (int argc, char** argv)
 #if 1
 	if (device_type == DEVICE_NAND) {
 		if (image_type == BUILD_2NDBOOT)
-			merge_nsih_secondboot (in_file, out_file, &BUILD_INFO);
+			merge_nsih_secondboot(in_file, out_file, &BUILD_INFO);
 		else
-			make_image (out_file, in_file, &BUILD_INFO);
+			make_image(out_file, in_file, &BUILD_INFO);
 	}
 #else
 	if (device_type == DEVICE_NAND)
