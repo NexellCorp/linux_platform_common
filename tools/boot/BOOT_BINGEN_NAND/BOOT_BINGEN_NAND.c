@@ -93,7 +93,7 @@ int main(int argc, char **argv)
         return CTRUE;
     }
 
-	while( -1 !=(param_opt = getopt( argc, argv, "h:c:t:n:i:o:l:e:a:u:v:p:f:r:")))
+	while( -1 !=(param_opt = getopt( argc, argv, "hc:t:n:i:o:l:e:a:u:v:p:f:r:")))
 	{
       	switch(param_opt)
       	{
@@ -186,6 +186,12 @@ int main(int argc, char **argv)
 	{
 		if( (0 == strcmp( cpu_name, "NXP4330" )) )
 		{
+			if( InputSize > (NXP4330_SRAM_SIZE - NSIHSIZE) )
+			{
+				printf("Enter the binary size exceeded 16KB-512Byte.\n");
+				printf("Check Filesize!! (%d) \n", InputSize );
+				goto ERR_END;
+			}
 			OutputSize = NXP4330_SRAM_SIZE;
 		}
 		else if( (0 == strcmp( cpu_name, "NXP5430" )) || 0 == strcmp( cpu_name, "S5P6818" ) )
@@ -226,10 +232,17 @@ int main(int argc, char **argv)
 		printf("Did not enter the Filesize files.\r\n");
 		goto ERR_END;
 	}
-
+    else
+    {
+        if( (OutputSize <= (16*1024)) )
+            OutputSize = 16*1024;
+    }
+       
+#if 0
 	if( (OutputSize % 512) != 0 )
 		MallocSize = ((OutputSize / BLOCKSIZE) + 1) * BLOCKSIZE;
 	else
+#endif
 		MallocSize = OutputSize;
 
     Out_Buffer 	= (U8*)malloc( MallocSize );

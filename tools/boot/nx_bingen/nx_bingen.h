@@ -14,9 +14,7 @@
 
 
 /* Defines */
-#define MAX_2NDBOOT			(16384)
 #define ROMBOOT_MAXPAGE		(4096)
-
 #define NSIH_LEN			(512)
 
 
