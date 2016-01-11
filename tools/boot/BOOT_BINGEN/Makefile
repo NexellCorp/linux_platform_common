@@ -1,11 +1,11 @@
 CC		= gcc
 TARGET 	= BOOT_BINGEN
-OBJS 	= BOOT_BINGEN.o
+OBJS 	= BOOT_BINGEN.o GEN_NANDBOOTEC.o
 
 SRCS 	= $(OBJS:.o=.c)
 
 all : $(TARGET)
-	$(CC) $(SRCS) -o $(TARGET)
+	$(CC) BOOT_BINGEN.c GEN_NANDBOOTEC.c -o $(TARGET)
 	
 .c.o:
 	$(CC) $<
