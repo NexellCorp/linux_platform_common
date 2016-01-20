@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# build file systems
+# build ramdisk image
+#
 
 # command-line settable variables
 
@@ -239,7 +240,7 @@ function build_ramdisk()
 	$_SUDO_ mount -o loop $disk_name $mount_dir;
 
 	# copy files
-	cp -dR $root_path/* $mount_dir/
+	$_SUDO_ cp -a $root_path/* $mount_dir/
 
 	# build device nodes
 	if [ $make_node = "y" ] || [ -n "$ext_mk_sh" ]; then
