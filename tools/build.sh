@@ -2,50 +2,119 @@
 
 TOP=`pwd`
 
+# Version information
+UBOOT_VER=2014.07
+KERNEL_VER=3.4.39
+BUILDROOT_VER=2013.11
 
-if [ $# -ge 1 ]
-then 
-	BUILD_NAME=$1
-else 
-	BUILD_NAME=blackbox
+if [ $# -ge 3 ]; then
+    CHIPSET_NAME=$1
+    BOARD_NAME=$2
+	BOOT_DEV=$3
+else
+    echo "Please specify your build target information."
+    echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
+	echo "Supported chipset : s5p4418/s5p6818"
+    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref"
+    echo "Supported board based on s5p6818 : drone/svt/avn_ref"
+	echo "Avaliable boot device : sdmmc/spirom"
+    exit 0
 fi
 
-UBOOT_CONFIG_NAME=nxp4330q_${BUILD_NAME}
-KERNEL_CONFIG_NAME=nxp4330_${BUILD_NAME}
+# Confirm chipset and board
+if [ $1 == "s5p4418" ]; then
+	if [ $2 == "lepus" ]; then
+	    echo ""
+	else
+		if [ $2 == "drone" ]; then
+		    echo ""
+		else
+	        if [ $2 == "avn_ref" ]; then
+	            echo ""
+	        else
+			    if [ $2 == "svt" ]; then
+			        echo ""
+			    else
+			        echo "Not supported board!"
+			        echo "Supported board : lepus/drone/svt/avn_ref"
+			        exit 0
+			    fi
+			fi
+		fi
+	fi
+else
+	if [ $1 == "s5p6818" ]; then
+		if [ $2 == "drone" ]; then
+		    echo ""
+		else
+		    if [ $2 == "avn_ref" ]; then
+		        echo ""
+		    else
+		        if [ $2 == "svt" ]; then
+		            echo ""
+		        else
+		            echo "Not supported board!"
+		            echo "Supported board : drone/svt/avn_ref"
+		            exit 0
+		        fi
+			fi
+	    fi
+	else
+		echo "Not supported chipset!"
+		echo "Supported chipset : s5p4418/s5p6818"
+		exit 0
+	fi
+fi
+
+# Confirm boot device
+if [ $3 == "sdmmc" ]; then
+    echo ""
+else
+	if [ $3 == "spirom" ]; then
+		if [ $2 == "lepus" ]; then
+			echo ""
+		else
+			if [ $2 == "svt" ]; then
+				echo ""
+			else
+				echo "$3 is not supported in $BOARD_NAME"
+				exit 0
+			fi
+		fi
+	else
+		echo "Not supported boot device!"
+		echo "Avaliable boot device : sdmmc/spirom"
+		exit 0
+	fi
+fi
+
+UBOOT_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
+KERNEL_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
  
-UBOOT_DIR=$TOP/bootloader/u-boot-2013.x
-KERNEL_DIR=$TOP/kernel/kernel-3.4.39
+UBOOT_DIR=$TOP/bootloader/u-boot-${UBOOT_VER}
+KERNEL_DIR=$TOP/kernel/kernel-${KERNEL_VER}
 
-MODULES_DIR=$TOP/pyrope/modules
-APPLICATION_DIR=$TOP/pyrope/apps
-LIBRARY_DIR=$TOP/pyrope/library
-BLACKBOX_SOLUTION_DIR=$TOP/pyrope/Solution/BlackBoxSolution
+MODULES_DIR=$TOP/platform/${CHIPSET_NAME}/modules
+APPLICATION_DIR=$TOP/platform/${CHIPSET_NAME}/apps
+LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 
-FILESYSTEM_DIR=$TOP/pyrope/fs
-TOOLS_DIR=$TOP/pyrope/tools
-RESULT_DIR=$TOP/pyrope/result
-
-# byte
-BOOT_PARTITION_SIZE=67108864
+FILESYSTEM_DIR=$TOP/platform/common/fs
+BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
+TOOLS_DIR=$TOP/platform/common/tools
+RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
 # Kbyte default:11,264, 16384, 24576, 32768, 49152, 
-if [ ${BUILD_NAME} == "blackbox" ]; then
-	RAMDISK_SIZE=11264
-else
-	RAMDISK_SIZE=56320
-fi
-
+RAMDISK_SIZE=32768
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 
-
-NX_BINGEN=$TOP/pyrope/tools/bin/nx_bingen
-NSIH_FILE=$TOP/pyrope/boot/nsih/nsih_${BUILD_NAME}_spi.txt
-SECONDBOOT_FILE=$TOP/pyrope/boot/2ndboot/pyrope_2ndboot_${BUILD_NAME}_spi.bin
-SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BUILD_NAME}.bin
-
+NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
+NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${BOOT_DEV}.txt
+SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
+SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 
 CMD_V_BUILD_NUM=
 
+CMD_V_2NDBOOT=no
 CMD_V_UBOOT=no
 CMD_V_UBOOT_CLEAN=no
 
@@ -58,6 +127,8 @@ CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
 CMD_V_APPLICATION=no
 CMD_V_APPLICATION_CLEAN=no
+CMD_V_BUILDROOT=no
+CMD_V_BUILDROOT_CLEAN=no
 CMD_V_FILESYSTEM=no
 
 CMD_V_SDCARD_PACKAGING=no
@@ -76,13 +147,16 @@ CMD_V_BUILD_SEL=Not
 TEMP_UBOOT_TEXT=
 TEMP_KERNEL_TEXT=
 
-
 YEAR=0000
 MON=00
 DAY=00
 HOUR=00
 MIN=00
 SEC=00
+
+# Optional feature
+#LOAD_ADDRESS=0x48000000
+#LAUNCH_ADDRESS=0x48000000
 
 function check_result()
 {
@@ -103,6 +177,25 @@ function currentTime()
 	SEC=`date +%S`
 }
 
+function build_2ndboot()
+{
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo "# Make 2ndboot ($BOOT_DEV)"
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+    sleep 1.5
+    pushd . > /dev/null
+	echo "$NX_BINGEN -c $CHIPSET_NAME -t 2ndboot -n $NSIH_FILE -i $SECONDBOOT_FILE -o $SECONDBOOT_OUT_FILE"
+#   $NX_BINGEN -c $CHIPSET_NAME -t 2ndboot -n $NSIH_FILE -i $SECONDBOOT_FILE -o $SECONDBOOT_OUT_FILE -l $LOAD_ADDRESS -e $LAUNCH_ADDRESS
+	$NX_BINGEN -c $CHIPSET_NAME -t 2ndboot -n $NSIH_FILE -i $SECONDBOOT_FILE -o $SECONDBOOT_OUT_FILE
+    popd > /dev/null
+}
 
 function build_uboot_source()
 {
@@ -113,7 +206,7 @@ function build_uboot_source()
 		echo '#########################################################'
 		echo '#########################################################'
 		echo '#'
-		echo '# build u-boot clean '
+		echo '# Clean u-boot '
 		echo '#'
 		echo '#########################################################'
 
@@ -126,32 +219,31 @@ function build_uboot_source()
 		popd > /dev/null
 	fi
 
-
 	echo ''
 	echo ''
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo "# build uboot "
+	echo "# Build u-boot "
 	echo '#'
 	echo '#########################################################'
 
-	if [ -f $RESULT_DIR/build.nxp4330.uboot ]; then
-		rm -f $RESULT_DIR/build.nxp4330.uboot
+	if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
+		rm -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot
 	fi
-	echo "${UBOOT_CONFIG_NAME}_config" > $RESULT_DIR/build.nxp4330.uboot ##.build_${UBOOT_CONFIG_NAME}
+	echo "${UBOOT_CONFIG_NAME}_config" > $RESULT_DIR/build.${CHIPSET_NAME}.uboot
 
 	sleep 1.5
 	pushd . > /dev/null
 
 	cd $UBOOT_DIR
+	make ${UBOOT_CONFIG_NAME}_config
 	make -j8 -sw
 	check_result
-	popd > /dev/null
-
+	
 	cp -v ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
+	popd > /dev/null
 }
-
 
 function build_kernel_source()
 {
@@ -161,7 +253,7 @@ function build_kernel_source()
 		echo '#########################################################'
 		echo '#########################################################'
 		echo '#'
-		echo '# build kernel clean '
+		echo '# Clean kernel '
 		echo '#'
 		echo '#########################################################'
 
@@ -169,8 +261,8 @@ function build_kernel_source()
 
 		pushd . > /dev/null
 		cd $KERNEL_DIR
-		#make distclean
 		make ARCH=arm clean -j8
+		rm -rf .config
 		popd > /dev/null
 	fi
 
@@ -179,32 +271,26 @@ function build_kernel_source()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo "# build kernel "
+	echo "# Build kernel "
 	echo '#'
 	echo '#########################################################'
 
 	sleep 1.5
 
+    if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.kernel ]; then
+	    rm -f $RESULT_DIR/build.${CHIPSET_NAME}.kernel
+    fi
+
 	pushd . > /dev/null
 	cd $KERNEL_DIR
-
-	if [ -f .config ]; then
-		echo ""
-	else
-		echo "${KERNEL_CONFIG_NAME}_defconfig" > $RESULT_DIR/build.nxp4330.kernel ##.build_${UBOOT_CONFIG_NAME}	
-		make ARCH=arm ${KERNEL_CONFIG_NAME}_defconfig
-	fi
+	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 
 	make ARCH=arm uImage -j8 -sw
 	check_result
 	popd > /dev/null
 
 	cp -v ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
-
-	if [ -d /home/share/tftpboot ]; then
-		cp -v ${KERNEL_DIR}/arch/arm/boot/uImage /home/share/tftpboot/
-		cp -v ${KERNEL_DIR}/arch/arm/boot/Image /home/share/tftpboot/
-	fi
 }
 
 function build_kernel_module()
@@ -212,7 +298,7 @@ function build_kernel_module()
 
 	echo ''
 	echo '#########################################################'
-	echo '# build kernel modules'
+	echo '# Build kernel module'
 	echo '#########################################################'
 
 	sleep 1.5
@@ -231,7 +317,7 @@ function build_kernel_current_menuconfig()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo "# kernel ${KERNEL_CONFIG_NAME}_defconfig menuconfig "
+	echo "# Kernel ${KERNEL_CONFIG_NAME}_linux_defconfig menuconfig "
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -243,33 +329,34 @@ function build_kernel_current_menuconfig()
 	popd > /dev/null
 }
 
-function build_kernel_configcopy()
+function build_kernel_configuration()
 {
 	echo ''
 	echo ''
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo "# kernel set ${KERNEL_CONFIG_NAME}_defconfig"
+	echo "# Set kernel ${KERNEL_CONFIG_NAME}_linux_defconfig "
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
 
-	if [ -f $RESULT_DIR/build.nxp4330.kernel ]; then
-		rm -f $RESULT_DIR/build.nxp4330.kernel
+	if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.kernel ]; then
+		rm -f $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 	fi
 
 	sleep 1.5
 	pushd . > /dev/null
 	cd $KERNEL_DIR
 	make distclean
-	make ARCH=arm ${KERNEL_CONFIG_NAME}_defconfig
+	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
 	check_result
 
-	echo "${KERNEL_CONFIG_NAME}_defconfig" > $RESULT_DIR/build.nxp4330.kernel ##.build_${UBOOT_CONFIG_NAME}	
+	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel	
 	popd > /dev/null
 }
 
+# Not used
 function build_partial_app()
 {
 	if [ -d $1 ]; then
@@ -286,6 +373,7 @@ function build_partial_app()
 	fi
 }
 
+# Not used
 function build_partial_lib()
 {
 	if [ -d $1 ]; then
@@ -310,7 +398,7 @@ function build_application()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo '# lib & application '
+	echo '# Library & Application '
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -319,87 +407,60 @@ function build_application()
 
 	pushd . > /dev/null
 
-	build_partial_lib $LIBRARY_DIR/src/libnxtypefind
-	build_partial_lib $LIBRARY_DIR/src/libcec
-	build_partial_lib $LIBRARY_DIR/src/libion
-	build_partial_lib $LIBRARY_DIR/src/libnxmalloc
-	build_partial_lib $LIBRARY_DIR/src/libnxadc
-	build_partial_lib $LIBRARY_DIR/src/libnxaudio
-	build_partial_lib $LIBRARY_DIR/src/libnxgpio
-	build_partial_lib $LIBRARY_DIR/src/libnxgraphictools
-	build_partial_lib $LIBRARY_DIR/src/libnxmovieplayer
-	build_partial_lib $LIBRARY_DIR/src/libnxnmeaparser
-	build_partial_lib $LIBRARY_DIR/src/libnxscaler
-	build_partial_lib $LIBRARY_DIR/src/libnxv4l2
-	build_partial_lib $LIBRARY_DIR/src/libnxvpu
-	build_partial_lib $LIBRARY_DIR/src/libnxuevent
-
-	build_partial_app $APPLICATION_DIR/adc_test
-	build_partial_app $APPLICATION_DIR/audio_test
-	build_partial_app $APPLICATION_DIR/cec_test
-	build_partial_app $APPLICATION_DIR/fb_test
-	build_partial_app $APPLICATION_DIR/gpio_test
-	build_partial_app $APPLICATION_DIR/typefind_app
-	build_partial_app $APPLICATION_DIR/movie_player_app
-	build_partial_app $APPLICATION_DIR/nmea_test
-	build_partial_app $APPLICATION_DIR/spi_test
-	build_partial_app $APPLICATION_DIR/transcoding_example
-	build_partial_app $APPLICATION_DIR/v4l2_test
-	build_partial_app $APPLICATION_DIR/vpu_test
-
-	if [ -d $BLACKBOX_SOLUTION_DIR ]; then
-		echo ''
-		echo '#########################################################'
-		echo '# BlackBox Solution '
-		echo '#########################################################'
-		cd $BLACKBOX_SOLUTION_DIR/build
-		chmod 755 ./*.sh
-		if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
-			##./clean-blackbox.sh
-			make distclean -C ../src/libnxfilters
-			make distclean -C ../src/libnxdvr
-			make distclean -C ../apps/nxdvrsol
-			make distclean -C ../apps/nxguisol
-			make distclean -C ../apps/nxdvrmonitor
-
-			./clean-hls.sh
-			./clean-mp4.sh
-			./clean-rtp.sh
-		fi
-		##./build-blackbox.sh
-		make -j8 -C ../src/libnxfilters || exit $?
-		make install -C ../src/libnxfilters
-		check_result
-
-		make -j8 -C ../src/libnxdvr || exit $?
-		make install -C ../src/libnxdvr
-		check_result
-
-		make -j8 -C ../apps/nxdvrsol || exit $?
-		make install -C ../apps/nxdvrsol
-		check_result
-
-		make -j8 -C ../apps/nxguisol || exit $?
-		make install -C ../apps/nxguisol
-		check_result
-
-		make -j8 -C ../apps/nxdvrmonitor || exit $?
-		make install -C ../apps/nxdvrmonitor
-		check_result
-
-		./build-hls.sh
-		./build-mp4.sh
-		./build-rtp.sh
+	cd $LIBRARY_DIR/src
+	if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+		make clean
 	fi
+	make
+	check_result
+
+	cd $APPLICATION_DIR
+	if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+		make clean
+	fi
+	make
+	check_result
 
 	popd > /dev/null
+}
+
+function build_buildroot()
+{
+	cd $BUILDROOT_DIR
+
+	if [ ${CMD_V_BUILDROOT_CLEAN} = "yes" ]; then
+        echo '#########################################################'
+        echo '#########################################################'
+        echo '#'
+        echo '# Clean buildroot '
+        echo '#'
+        echo '#########################################################'
+		make clean
+	fi
+
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo "# Build buildroot "
+	echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+	if [ -f .config ]; then
+		echo ""
+	else
+		cp -v ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
+	fi
+	make
+    check_result
 }
 
 function copy_app()
 {
 	if [ -d $1 ]; then
-		echo '//////////////////////////////////////////////////////////////////////////////'
-		echo "// copy $1 "
+		echo "# copy $1 #"
 		cp -v $1/$2 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 		check_result
 	fi
@@ -412,7 +473,7 @@ function build_filesystem()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo "# filesystem(rootfs-ramdisk)"
+	echo "# Make filesystem (rootfs type : ramdisk)"
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -428,57 +489,51 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
-		copy_app $APPLICATION_DIR/adc_test adc_test
-		copy_app $APPLICATION_DIR/audio_test audio_test
-		copy_app $APPLICATION_DIR/cec_test cec_test
-		copy_app $APPLICATION_DIR/fb_test fb_test
-		copy_app $APPLICATION_DIR/gpio_test gpio_test
-		copy_app $APPLICATION_DIR/nmea_test nmea_test
-		copy_app $APPLICATION_DIR/spi_test spi_test
-		copy_app $APPLICATION_DIR/typefind_app typefind_app
-		copy_app $APPLICATION_DIR/movie_player_app movieplayer_app
-		copy_app $APPLICATION_DIR/transcoding_example trans_test2
+		if [ $CHIPSET_NAME == "s5p4418" ]; then
+			copy_app $APPLICATION_DIR/adc_test adc_test
+			copy_app $APPLICATION_DIR/audio_test audio_test
+			copy_app $APPLICATION_DIR/fb_test fb_test
+			copy_app $APPLICATION_DIR/gpio_test gpio_test
+			copy_app $APPLICATION_DIR/nmea_test nmea_test
+			copy_app $APPLICATION_DIR/spi_test spi_test
+			copy_app $APPLICATION_DIR/transcoding_example trans_test2
+			copy_app $APPLICATION_DIR/vip_test vip_test
+			copy_app $APPLICATION_DIR/vpu_test2 codec_tests
 
-		if [ -d $APPLICATION_DIR/v4l2_test ]; then
-			echo '//////////////////////////'
-			echo '// copy v4l2_test '
-			cd $APPLICATION_DIR/v4l2_test/
-			cp -v camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-			check_result
+            if [ -d $APPLICATION_DIR/jpeg_test ]; then
+                cd $APPLICATION_DIR/jpeg_test/
+                cp -v jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+                check_result
+            fi
+
+			if [ -d $APPLICATION_DIR/v4l2_test ]; then
+				cd $APPLICATION_DIR/v4l2_test/
+				cp -v camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+				check_result
+			fi
+		
+			if [ -d $APPLICATION_DIR/vpu_test ]; then
+				cd $APPLICATION_DIR/vpu_test/
+				cp -v dec_test enc_test jpg_test trans_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+				check_result
+			fi
+		else
+			if [ $CHIPSET_NAME == "s5p6818" ]; then
+				copy_app $APPLICATION_DIR/v4l2_test csi_deinterlacer_test
+				copy_app $APPLICATION_DIR/vpu_test2 codec_tests
+			fi
 		fi
 		
-		if [ -d $APPLICATION_DIR/vpu_test ]; then
-			echo '//////////////////////////'
-			echo '// copy vpu_test '
-			cd $APPLICATION_DIR/vpu_test/
-			cp -v dec_test enc_test jpg_test trans_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-			check_result
-		fi
+		echo ''
+		echo '# copy all libraries #'
+		cp -v $LIBRARY_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		check_result
 
-			echo ''
-			echo '//////////////////////////////////////////////////////////////////////////////'
-			echo '// copy gstreamer-0.10 '
-			cp -vr $LIBRARY_DIR/lib/gstreamer-0.10 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-
-			echo ''
-			echo '//////////////////////////'
-			echo '// copy lib '
-			cp -v $LIBRARY_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-
-			echo ''
-			echo '//////////////////////////'
-			echo '// copy coda960 '
-			cp -v $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-			check_result
-			echo ''
-
-		if [ -d $BLACKBOX_SOLUTION_DIR ]; then
-			echo '//////////////////////////'
-			echo '// copy BlackBox Solution '
-			cp -v $BLACKBOX_SOLUTION_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			cp -rfv $BLACKBOX_SOLUTION_DIR/bin/* $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-		fi
+		echo ''
+		echo '# copy vpu module #'
+		cp -v $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+		check_result
+		echo ''
 
 		pushd . > /dev/null
 		cd $FILESYSTEM_DIR
@@ -497,7 +552,7 @@ function build_filesystem()
 		echo ''
 		echo ''
 		echo '#########################################################'
-		echo "# copy image"
+		echo "# Copy built images"
 		echo '#########################################################'
 		cp -v ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
 		check_result
@@ -505,20 +560,11 @@ function build_filesystem()
 		check_result
 		cp -v ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
 		check_result
-
-		if [ -d /home/share/tftpboot ]; then
-			cp -v ${KERNEL_DIR}/arch/arm/boot/uImage /home/share/tftpboot/
-			cp -v ${KERNEL_DIR}/arch/arm/boot/Image /home/share/tftpboot/
-		fi
-
-		if [ -d /home/share/nfs/nxp4330 ]; then
-			echo "cp -r ${FILESYSTEM_DIR}/buildroot/out/rootfs  ->  /home/share/nfs/nxp4330/"
-			sudo cp -r ${FILESYSTEM_DIR}/buildroot/out/rootfs /home/share/nfs/nxp4330/
-		fi
 	else
-		echo '#########################################################'
-		echo '# error : No "./fs/buildroot/out" folder.'
-		echo '#########################################################'
+		echo '##########################################################'
+		echo '# Error : No "./fs/buildroot/out" folder.'
+		echo '# Please build buildroot before making ramdisk filesystem'
+		echo '##########################################################'
 	fi
 }
 
@@ -529,14 +575,13 @@ function build_fastboot_2ndboot()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo '# fastboot 2ndboot'
+	echo '# Fastboot 2ndboot'
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
 
 	sleep 1.5
 	pushd . > /dev/null
-	$NX_BINGEN -t 2ndboot -d other -o $SECONDBOOT_OUT_FILE -i $SECONDBOOT_FILE -n $NSIH_FILE -l 0x40c00000 -e 0x40c00000
 	sudo fastboot flash 2ndboot $SECONDBOOT_OUT_FILE
 	popd > /dev/null
 }
@@ -548,7 +593,7 @@ function build_fastboot_uboot()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo '# fastboot uboot'
+	echo '# Fastboot u-boot'
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -566,7 +611,7 @@ function build_fastboot_boot()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo '# fastboot boot(Kernel)'
+	echo '# Fastboot kernel'
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -577,6 +622,20 @@ function build_fastboot_boot()
 	popd > /dev/null
 }
 
+function complete_fastboot_reboot()
+{
+    echo '#########################################################'
+    echo '#'
+    echo '# Fastboot reboot'
+    echo '#'
+    echo '#########################################################'
+
+    sleep 1.5
+    pushd . > /dev/null
+    sudo fastboot reboot
+    popd > /dev/null
+}
+
 function build_fastboot_system()
 {
 	echo ''
@@ -584,7 +643,7 @@ function build_fastboot_system()
 	echo '#########################################################'
 	echo '#########################################################'
 	echo '#'
-	echo '# fastboot boot(system)'
+	echo '# Fastboot system'
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
@@ -594,7 +653,6 @@ function build_fastboot_system()
 	sudo fastboot flash ramdisk $RESULT_DIR/ramdisk.gz
 	popd > /dev/null
 }
-
 
 function build_function_main()
 {
@@ -606,6 +664,17 @@ function build_function_main()
 	echo '#########################################################'
 	echo ""
 
+	if [ -d $RESULT_DIR ]; then
+		echo 'The result directory has already been created.'
+	else
+		echo 'Creating the result directory...'
+		mkdir $RESULT_DIR
+	fi
+
+	if [ ${CMD_V_2NDBOOT} = "yes" ]; then
+		CMD_V_BUILD_SEL="Make second boot"
+		build_2ndboot
+	fi
 
 	if [ ${CMD_V_UBOOT} = "yes" ]; then
 		CMD_V_BUILD_SEL="Build u-boot"
@@ -623,8 +692,14 @@ function build_function_main()
 	fi
 
 	if [ ${CMD_V_APPLICATION} = "yes" ]; then
-		CMD_V_BUILD_SEL="Build Application"
+		CMD_V_BUILD_SEL="Build Library and Application"
 		build_application
+	fi
+
+
+	if [ ${CMD_V_BUILDROOT} = "yes" ]; then
+		CMD_V_BUILD_SEL="Build Buildroot for filesystem"
+		build_buildroot
 	fi
 
 	if [ ${CMD_V_FILESYSTEM} = "yes" ]; then
@@ -644,15 +719,19 @@ function build_function_main()
 
 	echo ""
 	echo '#########################################################'
-	echo "# Build Information				"
-	echo "#     Build      : $CMD_V_BUILD_SEL	"
+	echo "#                 Complete success!"
+	echo '#########################################################'
+	echo "# Build Information"
+	echo "#     Chipset       : "${CHIPSET_NAME}" "
+	echo "#     Board Name    : "${BOARD_NAME}" "
+	echo "#     U-boot Config : "${TEMP_UBOOT_TEXT}" "
+	echo "#     Kernel Config : "${TEMP_KERNEL_TEXT}" "
 	echo "#"
+	echo "# Completion Time"
 	echo "#     Start Time : "${StartTime}"	"
-	echo "#       End Time : "${EndTime}"	"
+	echo "#     End Time   : "${EndTime}"	"
 	echo '#########################################################'
 }
-
-
 
 ################################################################
 ##
@@ -660,135 +739,151 @@ function build_function_main()
 ##
 ################################################################
 
-# export PATH=$TOP/prebuilts/gcc/linux-X86/arm/arm-eabi-4.6/bin/:$PATH
-# arm-eabi-gcc -v 2> /dev/null
-# check_result
-
 if [ -d $RESULT_DIR ]; then
 	echo ""
 else
 	mkdir -p $RESULT_DIR
 fi
 
-if [ -f $RESULT_DIR/build.nxp4330.uboot ]; then
-	TEMP_UBOOT_TEXT=`cat $RESULT_DIR/build.nxp4330.uboot`
+if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
+	TEMP_UBOOT_TEXT=`cat $RESULT_DIR/build.${CHIPSET_NAME}.uboot`
 fi
-if [ -f $RESULT_DIR/build.nxp4330.kernel ]; then
-	TEMP_KERNEL_TEXT=`cat $RESULT_DIR/build.nxp4330.kernel`
+if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.kernel ]; then
+	TEMP_KERNEL_TEXT=`cat $RESULT_DIR/build.${CHIPSET_NAME}.kernel`
 fi
 
-if [ ${BUILD_NAME} != "build_exit" ]; then
+if [ ${BOARD_NAME} != "build_exit" ]; then
 	while [ -z $CMD_V_BUILD_NUM ]
 	do
 		clear
 		echo "******************************************************************** "
-		echo "Build Menu "
-		echo "  TOP DIR       : $TOP"
+		echo "[Build Function Menu]"
+		echo "  TOP Directory : $TOP"
 		echo "  Before Uboot  : ${TEMP_UBOOT_TEXT}"
 		echo "  Before Kernel : ${TEMP_KERNEL_TEXT}"
-		echo "  Build Name    : $BUILD_NAME"
+		echo "  Board Name    : $BOARD_NAME"
+		echo "  BOOT Device   : $BOOT_DEV"
 		echo "******************************************************************** "
 		echo "  1. ALL(+Compile)"
-		echo "     1c. ALL(+Clean Build)"       
+		echo "     1c. Clean Build"       
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  4. u-boot+kernel (+Build)   4c. clean Build"
-		echo "     41.  u-boot(+Build)		41c. u-boot(+Clean Build)"       
-		echo "     42.  kernel(+Build)		42c. kernel(+Clean Build)"       
+		echo "  2. 2ndboot+u-boot+kernel(+Build)   2c. Clean Build"
+		echo "     21.  u-boot(+Build)		21c. u-boot(+Clean Build)"
+		echo "     22.  kernel(+Build)		22c. kernel(+Clean Build)"
+		echo "     23.  2ndboot(+Make)"       
 		echo " "
-		echo "     4m.  kernel menuconfig"
-		echo "     4mc. ${KERNEL_CONFIG_NAME}_defconfig -> .config"
-		echo " "
-		echo "--------------------------------------------------------------------"
-		echo "  6. Application+Library"
-		echo "     6c. App+Lib(+Clean Build)"       
+		echo "     2m.  kernel menuconfig"
+		echo "     2mc. ${KERNEL_CONFIG_NAME}_linux_defconfig -> .config"
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  7. File System(ramdisk)(+Build)"
+		echo "  3. Application+Library(+Build)"
+		echo "     3c. App+Lib(+Clean Build)"       
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  9. eMMC packaging(All)"
-		echo "     91. fastboot secondboot(2ndBoot)"
-		echo "     92. fastboot bootloader(u-boot)"
-		echo "     93. fastboot boot(kernel)"
-		echo "     94. fastboot system(rootfs)"
+		echo "  4. Buildroot(+Build)"
+		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  0. exit "
+		echo "  5. Ramdisk(+Make)"
+		echo " "
+		echo "--------------------------------------------------------------------"
+		echo "  6. eMMC Packaging(All)"
+		echo "     61. fastboot secondboot(2ndboot)"
+		echo "     62. fastboot bootloader(u-boot)"
+		echo "     63. fastboot boot(kernel)"
+		echo "     64. fastboot system(rootfs)"
+		echo "     65. fastboot reboot"
+		echo " "
+		echo "--------------------------------------------------------------------"
+		echo "  0. Exit"
 		echo "--------------------------------------------------------------------"
 
 		echo -n "     Select Menu -> "
 		read CMD_V_BUILD_NUM
 		case $CMD_V_BUILD_NUM in
 			#------------------------------------------------------------------------------------------------
-			1) CMD_V_UBOOT=yes	
+			1) CMD_V_2NDBOOT=yes
+				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
 			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_APPLICATION=yes
+				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes					
 			    ;;
 
-				1c) CMD_V_UBOOT_CLEAN=yes
+				1c) CMD_V_2NDBOOT=yes
+					CMD_V_UBOOT_CLEAN=yes
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
 				    CMD_V_KERNEL=yes 
 				    CMD_V_KERNEL_MODULE=yes
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
+					CMD_V_BUILDROOT=yes
+					CMD_V_BUILDROOT_CLEAN=yes
 				    CMD_V_FILESYSTEM=yes
 				    ;;
 
 			#------------------------------------------------------------------------------------------------
-			4) CMD_V_KERNEL=yes 
+			2) CMD_V_KERNEL=yes 
 			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_UBOOT=yes 
 			    ;;
-				4c) CMD_V_UBOOT=yes
+				2c) CMD_V_UBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes				
 					CMD_V_KERNEL=yes 
 					CMD_V_KERNEL_CLEAN=yes
 					CMD_V_KERNEL_MODULE=yes
-				       ;;
-				41) CMD_V_UBOOT=yes							
 				    ;;
-				41c) CMD_V_UBOOT=yes
-				       CMD_V_UBOOT_CLEAN=yes				
-				       ;;
-				42) CMD_V_KERNEL=yes 						
+				21) CMD_V_UBOOT=yes							
+				    ;;
+				21c) CMD_V_UBOOT=yes
+				     CMD_V_UBOOT_CLEAN=yes				
+				     ;;
+				22) CMD_V_KERNEL=yes 						
 				     CMD_V_KERNEL_MODULE=yes
 					 ;;
-				42c) CMD_V_KERNEL=yes 
-				       CMD_V_KERNEL_CLEAN=yes
+				22c) CMD_V_KERNEL=yes 
+					 CMD_V_KERNEL_CLEAN=yes
 					 CMD_V_KERNEL_MODULE=yes
-				       ;;
+ 			       	 ;;
+				23) CMD_V_2NDBOOT=yes
+					;;
 
-				4m)	build_kernel_current_menuconfig	;;
-				4mc)build_kernel_configcopy	;;
+				2m)	build_kernel_current_menuconfig	;;
+				2mc)build_kernel_configuration	;;
 
 			#------------------------------------------------------------------------------------------------
-			6)	CMD_V_APPLICATION=yes					
+			3)	CMD_V_APPLICATION=yes					
 				;;
-				6c) CMD_V_APPLICATION=yes
+				3c) CMD_V_APPLICATION=yes
 					CMD_V_APPLICATION_CLEAN=yes
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			7)	CMD_V_FILESYSTEM=yes					;;
+			4)	CMD_V_BUILDROOT=yes					;;
 
 			#------------------------------------------------------------------------------------------------
-			9)	CMD_V_BUILD_NUM=
+			5)	CMD_V_FILESYSTEM=yes					;;
+
+			#------------------------------------------------------------------------------------------------
+			6)	CMD_V_BUILD_NUM=
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
-				build_fastboot_system					;;
-
-				91)	CMD_V_BUILD_NUM=
+				build_fastboot_system					
+				complete_fastboot_reboot                ;;
+				61)	CMD_V_BUILD_NUM=
 					build_fastboot_2ndboot				;;
-				92)	CMD_V_BUILD_NUM=
+				62)	CMD_V_BUILD_NUM=
 					build_fastboot_uboot				;;
-				93)	CMD_V_BUILD_NUM=
+				63)	CMD_V_BUILD_NUM=
 					build_fastboot_boot				;;
-				94)	CMD_V_BUILD_NUM=
+				64)	CMD_V_BUILD_NUM=
 					build_fastboot_system				;;
+				65) CMD_V_BUILD_NUM=
+                    complete_fastboot_reboot        ;;
+
 			#------------------------------------------------------------------------------------------------
 			0)	CMD_V_BUILD_NUM=0
 				echo ""
@@ -811,3 +906,4 @@ fi
 echo ""
 
 
+## To do : Set clean build libs & apps
