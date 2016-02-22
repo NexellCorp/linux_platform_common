@@ -73,7 +73,6 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	--disable-spc \
 	--disable-gme \
 	--disable-xvid \
-	--disable-vdpau \
 	--disable-sbc \
 	--disable-schro \
 	--disable-zbar \
