@@ -843,6 +843,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  4. Buildroot(+Build)"
+		echo "     4c. Buildroot(+Clean Build)"       
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  5. Ramdisk(+Make)"
@@ -923,7 +924,11 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			4)	CMD_V_BUILDROOT=yes					;;
+			4)	CMD_V_BUILDROOT=yes					
+				;;
+				4c) CMD_V_BUILDROOT=yes
+					CMD_V_BUILDROOT_CLEAN=yes
+					;;
 
 			#------------------------------------------------------------------------------------------------
 			5)	CMD_V_FILESYSTEM=yes					;;
