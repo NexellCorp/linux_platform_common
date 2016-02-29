@@ -506,6 +506,12 @@ function build_filesystem()
 			copy_app $APPLICATION_DIR/vip_test vip_test
 			copy_app $APPLICATION_DIR/vpu_test2 codec_tests
 
+            if [ -d $APPLICATION_DIR/cec_test ]; then
+                cd $APPLICATION_DIR/cec_test/
+				cp -v cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+				check_result
+			fi
+
             if [ -d $APPLICATION_DIR/jpeg_test ]; then
                 cd $APPLICATION_DIR/jpeg_test/
                 cp -v jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
