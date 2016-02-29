@@ -69,13 +69,18 @@ fi
 # Confirm boot device
 if [ $3 == "sdmmc" ]; then
     echo ""
+	if [ $2 == "lepus" ]; then
+		DEVNUM=0
+	else
+		DEVNUM=2
+	fi
 else
 	if [ $3 == "spirom" ]; then
 		if [ $2 == "lepus" ]; then
-			echo ""
+			DEVNUM=0
 		else
 			if [ $2 == "svt" ]; then
-				echo ""
+				DEVNUM=2
 			else
 				echo "$3 is not supported in $BOARD_NAME"
 				exit 0
@@ -111,6 +116,7 @@ NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
 NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${BOOT_DEV}.txt
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
+PARTMAP=$RESULT_DIR/partmap.txt
 
 CMD_V_BUILD_NUM=
 
@@ -568,6 +574,61 @@ function build_filesystem()
 	fi
 }
 
+function build_fastboot_partmap()
+{
+	if [ -f ${PARTMAP} ]; then
+			echo ""
+	else
+	    echo ''
+	    echo ''
+	    echo '#########################################################'
+	    echo '#########################################################'
+	    echo '#'
+	    echo '# Make partmap'
+	    echo '#'
+	    echo '#########################################################'
+	    echo '#########################################################'
+
+		if [ $BOOT_DEV == "sdmmc" ]; then
+			# sdmmc
+			echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
+			echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
+			echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+			echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+			echo "flash=mmc,${DEVNUM}:data:fat:0x3700000,0x0;" >> ${PARTMAP}
+		else
+			# spirom
+			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
+			echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
+            echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+            echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+            echo "flash=mmc,${DEVNUM}:data:fat:0x3700000,0x0;" >> ${PARTMAP}
+		fi
+
+		sleep 1.5
+		pushd . > /dev/null
+
+		cat ${PARTMAP}
+		popd > /dev/null		
+	fi
+
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo '# Fastboot partmap'
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+	sleep 1.5
+	pushd . > /dev/null
+
+	sudo fastboot flash partmap $PARTMAP
+	popd > /dev/null		
+}
+
 function build_fastboot_2ndboot()
 {
 	echo ''
@@ -788,11 +849,12 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  6. eMMC Packaging(All)"
-		echo "     61. fastboot secondboot(2ndboot)"
-		echo "     62. fastboot bootloader(u-boot)"
-		echo "     63. fastboot boot(kernel)"
-		echo "     64. fastboot system(rootfs)"
-		echo "     65. fastboot reboot"
+		echo "     61. fastboot partmap(partition map)"
+		echo "     62. fastboot secondboot(2ndboot)"
+		echo "     63. fastboot bootloader(u-boot)"
+		echo "     64. fastboot boot(kernel)"
+		echo "     65. fastboot system(rootfs)"
+		echo "     66. fastboot reboot"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  0. Exit"
@@ -868,20 +930,23 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			6)	CMD_V_BUILD_NUM=
+				build_fastboot_partmap
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
 				build_fastboot_system					
 				complete_fastboot_reboot                ;;
 				61)	CMD_V_BUILD_NUM=
-					build_fastboot_2ndboot				;;
+					build_fastboot_partmap				;;
 				62)	CMD_V_BUILD_NUM=
-					build_fastboot_uboot				;;
+					build_fastboot_2ndboot				;;
 				63)	CMD_V_BUILD_NUM=
-					build_fastboot_boot				;;
+					build_fastboot_uboot				;;
 				64)	CMD_V_BUILD_NUM=
+					build_fastboot_boot				;;
+				65)	CMD_V_BUILD_NUM=
 					build_fastboot_system				;;
-				65) CMD_V_BUILD_NUM=
+				66) CMD_V_BUILD_NUM=
                     complete_fastboot_reboot        ;;
 
 			#------------------------------------------------------------------------------------------------
