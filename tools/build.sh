@@ -100,7 +100,8 @@ UBOOT_DIR=$TOP/bootloader/u-boot-${UBOOT_VER}
 KERNEL_DIR=$TOP/kernel/kernel-${KERNEL_VER}
 
 MODULES_DIR=$TOP/platform/${CHIPSET_NAME}/modules
-APPLICATION_DIR=$TOP/platform/${CHIPSET_NAME}/apps
+APPLICATION_4418_DIR=$TOP/platform/s5p4418/apps
+APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 
 FILESYSTEM_DIR=$TOP/platform/common/fs
@@ -420,12 +421,22 @@ function build_application()
 	make
 	check_result
 
-	cd $APPLICATION_DIR
+	cd $APPLICATION_4418_DIR
 	if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
 		make clean
 	fi
 	make
 	check_result
+
+	
+	if [ $CHIPSET_NAME == "s5p6818" ]; then
+	    cd $APPLICATION_6818_DIR
+	    if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+	        make clean
+	    fi
+	    make
+	    check_result
+	fi
 
 	popd > /dev/null
 }
@@ -495,47 +506,58 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
-		if [ $CHIPSET_NAME == "s5p4418" ]; then
-			copy_app $APPLICATION_DIR/adc_test adc_test
-			copy_app $APPLICATION_DIR/audio_test audio_test
-			copy_app $APPLICATION_DIR/fb_test fb_test
-			copy_app $APPLICATION_DIR/gpio_test gpio_test
-			copy_app $APPLICATION_DIR/nmea_test nmea_test
-			copy_app $APPLICATION_DIR/spi_test spi_test
-			copy_app $APPLICATION_DIR/transcoding_example trans_test2
-			copy_app $APPLICATION_DIR/vip_test vip_test
-			copy_app $APPLICATION_DIR/vpu_test2 codec_tests
+			copy_app $APPLICATION_4418_DIR/adc_test adc_test
+			copy_app $APPLICATION_4418_DIR/audio_test audio_test
+			copy_app $APPLICATION_4418_DIR/fb_test fb_test
+			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
+			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
 
-            if [ -d $APPLICATION_DIR/cec_test ]; then
-                cd $APPLICATION_DIR/cec_test/
+			if [ $BOARD_NAME == "drone" ]; then
+				copy_app $APPLICATION_4418_DIR/spi_test spi_test
+			fi
+
+			copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+			copy_app $APPLICATION_4418_DIR/vip_test vip_test
+
+			if [ $CHIPSET_NAME == "s5p4418" ]; then
+				copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
+			else
+				if [ $CHIPSET_NAME == "s5p6818" ]; then
+					copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
+					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
+				fi
+			fi
+
+            if [ -d $APPLICATION_4418_DIR/cec_test ]; then
+                cd $APPLICATION_4418_DIR/cec_test/
 				cp -v cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 				check_result
 			fi
 
-            if [ -d $APPLICATION_DIR/jpeg_test ]; then
-                cd $APPLICATION_DIR/jpeg_test/
+            if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
+                cd $APPLICATION_4418_DIR/jpeg_test/
                 cp -v jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
                 check_result
             fi
 
-			if [ -d $APPLICATION_DIR/v4l2_test ]; then
-				cd $APPLICATION_DIR/v4l2_test/
-				cp -v camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
+				cd $APPLICATION_4418_DIR/v4l2_test/
+				if [ $CHIPSET_NAME == "s5p4418" ]; then
+					cp -v camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+				else
+					if [ $CHIPSET_NAME == "s5p6818" ]; then
+						cp -v camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+					fi
+				fi
 				check_result
 			fi
 		
-			if [ -d $APPLICATION_DIR/vpu_test ]; then
-				cd $APPLICATION_DIR/vpu_test/
+			if [ -d $APPLICATION_4418_DIR/vpu_test ]; then
+				cd $APPLICATION_4418_DIR/vpu_test/
 				cp -v dec_test enc_test jpg_test trans_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 				check_result
 			fi
-		else
-			if [ $CHIPSET_NAME == "s5p6818" ]; then
-				copy_app $APPLICATION_DIR/v4l2_test csi_deinterlacer_test
-				copy_app $APPLICATION_DIR/vpu_test2 codec_tests
-			fi
-		fi
-		
+
 		echo ''
 		echo '# copy all libraries #'
 		cp -v $LIBRARY_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
@@ -800,6 +822,39 @@ function build_function_main()
 	echo '#########################################################'
 }
 
+function command_reset()
+{
+CMD_V_2NDBOOT=no
+CMD_V_UBOOT=no
+CMD_V_UBOOT_CLEAN=no
+
+CMD_V_KERNEL=no
+CMD_V_KERNEL_CLEAN=no
+CMD_V_KERNEL_MODULE=no
+
+CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+
+CMD_V_APPLICATION=no
+CMD_V_APPLICATION_CLEAN=no
+CMD_V_BUILDROOT=no
+CMD_V_BUILDROOT_CLEAN=no
+CMD_V_FILESYSTEM=no
+
+CMD_V_SDCARD_PACKAGING=no
+CMD_V_SDCARD_SELECT_DEV=
+CMD_V_EMMC_PACKAGING=no
+CMD_V_EMMC_PACKAGING_2NDBOOT=no
+CMD_V_EMMC_PACKAGING_UBOOT=no
+CMD_V_EMMC_PACKAGING_BOOT=no
+
+CMD_V_BASE_PORTING=no
+CMD_V_NEW_BOARD=
+
+CMD_V_BUILD_ERROR=no
+CMD_V_BUILD_SEL=Not
+}
+
 ################################################################
 ##
 ## main build start
@@ -904,8 +959,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					CMD_V_KERNEL_CLEAN=yes
 					CMD_V_KERNEL_MODULE=yes
 				    ;;
-				21) CMD_V_UBOOT=yes							
-				    ;;
+				21) CMD_V_UBOOT=yes					    ;;
 				21c) CMD_V_UBOOT=yes
 				     CMD_V_UBOOT_CLEAN=yes				
 				     ;;
@@ -916,22 +970,19 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					 CMD_V_KERNEL_CLEAN=yes
 					 CMD_V_KERNEL_MODULE=yes
  			       	 ;;
-				23) CMD_V_2NDBOOT=yes
-					;;
+				23) CMD_V_2NDBOOT=yes					;;
 
-				2m)	build_kernel_current_menuconfig	;;
-				2mc)build_kernel_configuration	;;
+				2m)	build_kernel_current_menuconfig		;;
+				2mc)build_kernel_configuration			;;
 
 			#------------------------------------------------------------------------------------------------
-			3)	CMD_V_APPLICATION=yes					
-				;;
+			3)	CMD_V_APPLICATION=yes					;;
 				3c) CMD_V_APPLICATION=yes
 					CMD_V_APPLICATION_CLEAN=yes
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			4)	CMD_V_BUILDROOT=yes					
-				;;
+			4)	CMD_V_BUILDROOT=yes						;;
 				4c) CMD_V_BUILDROOT=yes
 					CMD_V_BUILDROOT_CLEAN=yes
 					;;
@@ -954,32 +1005,30 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				63)	CMD_V_BUILD_NUM=
 					build_fastboot_uboot				;;
 				64)	CMD_V_BUILD_NUM=
-					build_fastboot_boot				;;
+					build_fastboot_boot					;;
 				65)	CMD_V_BUILD_NUM=
 					build_fastboot_system				;;
 				66) CMD_V_BUILD_NUM=
-                    complete_fastboot_reboot        ;;
+                    complete_fastboot_reboot        	;;
 
 			#------------------------------------------------------------------------------------------------
 			0)	CMD_V_BUILD_NUM=0
 				echo ""
-				exit 0										;;
+				exit 0									;;
 
 			#------------------------------------------------------------------------------------------------
-			*)	CMD_V_BUILD_NUM=							;;
+			*)	CMD_V_BUILD_NUM=						;;
 
 		esac
-		echo
+		    if [ $CMD_V_BUILD_NUM != 0 ]; then
+		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
+		        rm -rf CMD_V_LOG_FILE
+		        build_function_main 2>&1 | tee $CMD_V_LOG_FILE
+				command_reset
+				CMD_V_BUILD_NUM=
+		    fi
 	done
-
-	if [ $CMD_V_BUILD_NUM != 0 ]; then
-		CMD_V_LOG_FILE=$RESULT_DIR/build.log
-		rm -rf CMD_V_LOG_FILE
-		build_function_main 2>&1 | tee $CMD_V_LOG_FILE
-	fi
 fi
 
 echo ""
 
-
-## To do : Set clean build libs & apps
