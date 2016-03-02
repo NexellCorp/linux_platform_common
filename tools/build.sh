@@ -76,16 +76,20 @@ if [ $3 == "sdmmc" ]; then
 	fi
 else
 	if [ $3 == "spirom" ]; then
-		if [ $2 == "lepus" ]; then
-			DEVNUM=0
-		else
-			if [ $2 == "svt" ]; then
-				DEVNUM=2
-			else
-				echo "$3 is not supported in $BOARD_NAME"
-				exit 0
-			fi
-		fi
+#		if [ $2 == "drone" ]; then
+#			DEVNUM=0
+#		else
+#			if [ $2 == "lepus" ]; then
+#				DEVNUM=0
+#			else
+				if [ $2 == "svt" ]; then
+					DEVNUM=2
+				else
+					echo "$3 is not supported in $BOARD_NAME"
+					exit 0
+				fi
+#			fi
+#		fi
 	else
 		echo "Not supported boot device!"
 		echo "Avaliable boot device : sdmmc/spirom"
