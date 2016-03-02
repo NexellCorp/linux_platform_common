@@ -113,8 +113,8 @@ BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
 TOOLS_DIR=$TOP/platform/common/tools
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
-# Kbyte default:11,264, 16384, 24576, 32768, 49152, 
-RAMDISK_SIZE=32768
+# Kbyte default:11,264, 16384, 24576, 32768, 43008, 49152, 
+RAMDISK_SIZE=43008
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 
 NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
@@ -122,6 +122,8 @@ NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${B
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
+
+USE_FFMPEG=yes
 
 CMD_V_BUILD_NUM=
 
@@ -520,15 +522,24 @@ function build_filesystem()
 				copy_app $APPLICATION_4418_DIR/spi_test spi_test
 			fi
 
-			copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+			if [ $USE_FFMPEG == "yes" ]; then
+				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+			fi
+
 			copy_app $APPLICATION_4418_DIR/vip_test vip_test
 
 			if [ $CHIPSET_NAME == "s5p4418" ]; then
-				copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
+				if [ $USE_FFMPEG == "yes" ]; then
+					copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
+					cp -v $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				fi
 			else
 				if [ $CHIPSET_NAME == "s5p6818" ]; then
-					copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
+					if [ $USE_FFMPEG == "yes" ]; then
+						copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
+					fi
 					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
+					cp -v $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 				fi
 			fi
 
@@ -556,15 +567,12 @@ function build_filesystem()
 				check_result
 			fi
 		
-			if [ -d $APPLICATION_4418_DIR/vpu_test ]; then
-				cd $APPLICATION_4418_DIR/vpu_test/
-				cp -v dec_test enc_test jpg_test trans_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				check_result
-			fi
-
 		echo ''
 		echo '# copy all libraries #'
 		cp -v $LIBRARY_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		cp -v $LIBRARY_DIR/lib/*.so.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		cp -v $LIBRARY_DIR/lib/*.so.0.0.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		cp -v $LIBRARY_DIR/lib/*.so.0.0.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 		check_result
 
 		echo ''
