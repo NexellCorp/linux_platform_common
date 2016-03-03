@@ -114,7 +114,7 @@ TOOLS_DIR=$TOP/platform/common/tools
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
 # Kbyte default:11,264, 16384, 24576, 32768, 43008, 49152, 
-RAMDISK_SIZE=43008
+RAMDISK_SIZE=32768
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 
 NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
@@ -254,7 +254,7 @@ function build_uboot_source()
 	make -j8 -sw
 	check_result
 	
-	cp -v ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
+	cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
 	popd > /dev/null
 }
 
@@ -303,7 +303,7 @@ function build_kernel_source()
 	check_result
 	popd > /dev/null
 
-	cp -v ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
+	cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
 }
 
 function build_kernel_module()
@@ -474,7 +474,7 @@ function build_buildroot()
 	if [ -f .config ]; then
 		echo ""
 	else
-		cp -v ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
+		cp -av ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
 	fi
 	make
     check_result
@@ -484,7 +484,7 @@ function copy_app()
 {
 	if [ -d $1 ]; then
 		echo "# copy $1 #"
-		cp -v $1/$2 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+		cp -av $1/$2 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 		check_result
 	fi
 }
@@ -531,7 +531,7 @@ function build_filesystem()
 			if [ $CHIPSET_NAME == "s5p4418" ]; then
 				if [ $USE_FFMPEG == "yes" ]; then
 					copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
-					cp -v $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+					cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 				fi
 			else
 				if [ $CHIPSET_NAME == "s5p6818" ]; then
@@ -539,29 +539,29 @@ function build_filesystem()
 						copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
 					fi
 					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
-					cp -v $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+					cp -av $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 				fi
 			fi
 
             if [ -d $APPLICATION_4418_DIR/cec_test ]; then
                 cd $APPLICATION_4418_DIR/cec_test/
-				cp -v cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+				cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 				check_result
 			fi
 
             if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
                 cd $APPLICATION_4418_DIR/jpeg_test/
-                cp -v jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+                cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
                 check_result
             fi
 
 			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
 				cd $APPLICATION_4418_DIR/v4l2_test/
 				if [ $CHIPSET_NAME == "s5p4418" ]; then
-					cp -v camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+					cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 				else
 					if [ $CHIPSET_NAME == "s5p6818" ]; then
-						cp -v camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+						cp -av camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 					fi
 				fi
 				check_result
@@ -569,15 +569,12 @@ function build_filesystem()
 		
 		echo ''
 		echo '# copy all libraries #'
-		cp -v $LIBRARY_DIR/lib/*.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		cp -v $LIBRARY_DIR/lib/*.so.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		cp -v $LIBRARY_DIR/lib/*.so.0.0.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		cp -v $LIBRARY_DIR/lib/*.so.0.0.0 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 		check_result
 
 		echo ''
 		echo '# copy vpu module #'
-		cp -v $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+		cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 		check_result
 		echo ''
 
@@ -600,11 +597,11 @@ function build_filesystem()
 		echo '#########################################################'
 		echo "# Copy built images"
 		echo '#########################################################'
-		cp -v ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
+		cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
 		check_result
-		cp -v ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
+		cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
 		check_result
-		cp -v ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
+		cp -av ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
 		check_result
 	else
 		echo '##########################################################'
