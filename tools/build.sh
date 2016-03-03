@@ -213,7 +213,7 @@ function build_2ndboot()
 function build_uboot_source()
 {
 
-	if [ ${CMD_V_UBOOT_CLEAN} = "yes" ]; then
+	if [ ${CMD_V_UBOOT_CLEAN} == "yes" ]; then
 		echo ''
 		echo ''
 		echo '#########################################################'
@@ -260,7 +260,7 @@ function build_uboot_source()
 
 function build_kernel_source()
 {
-	if [ ${CMD_V_KERNEL_CLEAN} = "yes" ]; then
+	if [ ${CMD_V_KERNEL_CLEAN} == "yes" ]; then
 		echo ''
 		echo ''
 		echo '#########################################################'
@@ -378,7 +378,7 @@ function build_partial_app()
 		echo "# $1 "
 		echo '#########################################################'
 		cd $1
-		if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+		if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 			make clean
 		fi	
 		make -sw
@@ -395,7 +395,7 @@ function build_partial_lib()
 		echo "# $1 "
 		echo '#########################################################'
 		cd $1
-		if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+		if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 			make clean
 		fi	
 		make -sw
@@ -421,14 +421,14 @@ function build_application()
 	pushd . > /dev/null
 
 	cd $LIBRARY_DIR/src
-	if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 		make clean
 	fi
 	make
 	check_result
 
 	cd $APPLICATION_4418_DIR
-	if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 		make clean
 	fi
 	make
@@ -437,7 +437,7 @@ function build_application()
 	
 	if [ $CHIPSET_NAME == "s5p6818" ]; then
 	    cd $APPLICATION_6818_DIR
-	    if [ ${CMD_V_APPLICATION_CLEAN} = "yes" ]; then
+	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 	        make clean
 	    fi
 	    make
@@ -451,7 +451,7 @@ function build_buildroot()
 {
 	cd $BUILDROOT_DIR
 
-	if [ ${CMD_V_BUILDROOT_CLEAN} = "yes" ]; then
+	if [ ${CMD_V_BUILDROOT_CLEAN} == "yes" ]; then
         echo '#########################################################'
         echo '#########################################################'
         echo '#'
@@ -772,38 +772,38 @@ function build_function_main()
 		mkdir $RESULT_DIR
 	fi
 
-	if [ ${CMD_V_2NDBOOT} = "yes" ]; then
+	if [ ${CMD_V_2NDBOOT} == "yes" ]; then
 		CMD_V_BUILD_SEL="Make second boot"
 		build_2ndboot
 	fi
 
-	if [ ${CMD_V_UBOOT} = "yes" ]; then
+	if [ ${CMD_V_UBOOT} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build u-boot"
 		build_uboot_source
 	fi
 
-	if [ ${CMD_V_KERNEL} = "yes" ]; then
+	if [ ${CMD_V_KERNEL} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build Kernel"
 		build_kernel_source
 	fi
 
-	if [ ${CMD_V_KERNEL_MODULE} = "yes" ]; then
+	if [ ${CMD_V_KERNEL_MODULE} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build Kernel module"
 		build_kernel_module
 	fi
 
-	if [ ${CMD_V_APPLICATION} = "yes" ]; then
+	if [ ${CMD_V_APPLICATION} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build Library and Application"
 		build_application
 	fi
 
 
-	if [ ${CMD_V_BUILDROOT} = "yes" ]; then
+	if [ ${CMD_V_BUILDROOT} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build Buildroot for filesystem"
 		build_buildroot
 	fi
 
-	if [ ${CMD_V_FILESYSTEM} = "yes" ]; then
+	if [ ${CMD_V_FILESYSTEM} == "yes" ]; then
 		CMD_V_BUILD_SEL="Build Filesystem"
 		build_filesystem
 	fi
@@ -865,6 +865,8 @@ CMD_V_NEW_BOARD=
 
 CMD_V_BUILD_ERROR=no
 CMD_V_BUILD_SEL=Not
+
+CMD_V_BUILD_NUM=
 }
 
 ################################################################
@@ -1003,44 +1005,39 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			5)	CMD_V_FILESYSTEM=yes					;;
 
 			#------------------------------------------------------------------------------------------------
-			6)	CMD_V_BUILD_NUM=
+			6)	CMD_V_BUILD_NUM=-1
 				build_fastboot_partmap
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
 				build_fastboot_system					
 				complete_fastboot_reboot                ;;
-				61)	CMD_V_BUILD_NUM=
+				61)	CMD_V_BUILD_NUM=-1
 					build_fastboot_partmap				;;
-				62)	CMD_V_BUILD_NUM=
+				62)	CMD_V_BUILD_NUM=-1
 					build_fastboot_2ndboot				;;
-				63)	CMD_V_BUILD_NUM=
+				63)	CMD_V_BUILD_NUM=-1
 					build_fastboot_uboot				;;
-				64)	CMD_V_BUILD_NUM=
+				64)	CMD_V_BUILD_NUM=-1
 					build_fastboot_boot					;;
-				65)	CMD_V_BUILD_NUM=
+				65)	CMD_V_BUILD_NUM=-1
 					build_fastboot_system				;;
-				66) CMD_V_BUILD_NUM=
+				66) CMD_V_BUILD_NUM=-1
                     complete_fastboot_reboot        	;;
 
 			#------------------------------------------------------------------------------------------------
 			0)	CMD_V_BUILD_NUM=0
 				echo ""
 				exit 0									;;
-
-			#------------------------------------------------------------------------------------------------
-			*)	CMD_V_BUILD_NUM=						;;
-
 		esac
-		    if [ $CMD_V_BUILD_NUM != 0 ]; then
+		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then			
+				CMD_V_BUILD_NUM=
+			else
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
 		        rm -rf CMD_V_LOG_FILE
 		        build_function_main 2>&1 | tee $CMD_V_LOG_FILE
 				command_reset
-				CMD_V_BUILD_NUM=
 		    fi
 	done
 fi
-
 echo ""
-
