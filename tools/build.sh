@@ -111,6 +111,7 @@ LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
 TOOLS_DIR=$TOP/platform/common/tools
+EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
 # Kbyte default:11,264, 16384, 24576, 32768, 43008, 49152, 
@@ -575,6 +576,21 @@ function build_filesystem()
 		echo ''
 		echo '# copy vpu module #'
 		cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+		check_result
+
+		echo ''
+        echo '# copy 3d module #'
+        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+        check_result
+		echo ''
+
+		echo ''
+		echo '# copy mdev.conf #'
+		if [ $BOARD_NAME == "lepus" ]; then
+			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+		else
+			cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+		fi
 		check_result
 		echo ''
 
