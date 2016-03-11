@@ -107,6 +107,8 @@ MODULES_DIR=$TOP/platform/${CHIPSET_NAME}/modules
 APPLICATION_4418_DIR=$TOP/platform/s5p4418/apps
 APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
+LIBRARY_4418_DIR=$TOP/platform/s5p4418/library
+LIBRARY_6818_DIR=$TOP/platform/s5p4418/library
 
 FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
@@ -421,12 +423,21 @@ function build_application()
 
 	pushd . > /dev/null
 
-	cd $LIBRARY_DIR/src
+	cd $LIBRARY_4418_DIR/src
 	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 		make clean
 	fi
 	make
 	check_result
+
+	if [ $CHIPSET_NAME == "s5p6818" ]; then
+	    cd $LIBRARY_6818_DIR/src
+	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
+	        make clean
+	    fi
+	    make
+	    check_result
+	fi
 
 	cd $APPLICATION_4418_DIR
 	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
@@ -434,7 +445,6 @@ function build_application()
 	fi
 	make
 	check_result
-
 	
 	if [ $CHIPSET_NAME == "s5p6818" ]; then
 	    cd $APPLICATION_6818_DIR
@@ -517,7 +527,11 @@ function build_filesystem()
 			copy_app $APPLICATION_4418_DIR/audio_test audio_test
 			copy_app $APPLICATION_4418_DIR/fb_test fb_test
 			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
-			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
+			if [ $CHIPSET_NAME == "s5p6818" ]; then
+				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
+			else
+				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
+			fi
 
 			if [ $BOARD_NAME == "drone" ]; then
 				copy_app $APPLICATION_4418_DIR/spi_test spi_test
@@ -572,6 +586,20 @@ function build_filesystem()
 		echo '# copy all libraries #'
 		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 		check_result
+
+		if [ $CHIPSET_NAME == "s5p6818" ]; then
+			# Need by s5p6818 target
+			cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+			cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+			cp -av $LIBRARY_4418_DIR/lib/libnxjpeg.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+			cp -av $LIBRARY_4418_DIR/lib/libnxnmeaparser.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+			cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+		fi
 
 		echo ''
 		echo '# copy vpu module #'
