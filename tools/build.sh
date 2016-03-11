@@ -599,6 +599,8 @@ function build_filesystem()
 			check_result
 			cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 			check_result
+			cp -av $LIBRARY_4418_DIR/lib/libhevcdec.a $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
 		fi
 
 		echo ''
