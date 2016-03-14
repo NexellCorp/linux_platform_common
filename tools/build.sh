@@ -108,7 +108,7 @@ APPLICATION_4418_DIR=$TOP/platform/s5p4418/apps
 APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 LIBRARY_4418_DIR=$TOP/platform/s5p4418/library
-LIBRARY_6818_DIR=$TOP/platform/s5p4418/library
+LIBRARY_6818_DIR=$TOP/platform/s5p6818/library
 
 FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
@@ -589,6 +589,8 @@ function build_filesystem()
 
 		if [ $CHIPSET_NAME == "s5p6818" ]; then
 			# Need by s5p6818 target
+			cp -av $LIBRARY_4418_DIR/lib/libnxadc.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
 			cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 			check_result
 			cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
