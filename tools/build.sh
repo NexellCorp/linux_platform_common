@@ -116,10 +116,14 @@ TOOLS_DIR=$TOP/platform/common/tools
 EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
-# Kbyte default:11,264, 16384, 24576, 32768, 43008, 49152, 
+# Kbyte
 RAMDISK_SIZE=32768
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
+USERDATA_IMAGE=$RESULT_DIR/userdata.img
+# Byte
+USERDATA_SIZE=7516192768
 
+MAKE_EXT4FS=$TOOLS_DIR/bin/make_ext4fs
 NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
 NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${BOOT_DEV}.txt
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
@@ -146,6 +150,7 @@ CMD_V_APPLICATION_CLEAN=no
 CMD_V_BUILDROOT=no
 CMD_V_BUILDROOT_CLEAN=no
 CMD_V_FILESYSTEM=no
+CMD_V_USERDATA=no
 
 CMD_V_SDCARD_PACKAGING=no
 CMD_V_SDCARD_SELECT_DEV=
@@ -500,6 +505,29 @@ function copy_app()
 	fi
 }
 
+function build_userdata()
+{
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo "# Make userdata image (EXT4)"
+    echo "# Image Size = ${USERDATA_SIZE}"
+    echo '#########################################################'
+    echo '#########################################################'
+
+	sleep 1.5
+
+    if [ -f ${USERDATA_IMAGE} ]; then
+        rm -f ${USERDATA_IMAGE}
+    fi
+
+	pushd . > /dev/null
+	echo "$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE"
+	$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE
+}
+
 function build_filesystem()
 {
 	echo ''
@@ -663,6 +691,7 @@ function build_fastboot_partmap()
 {
 	if [ -f ${PARTMAP} ]; then
 			echo ""
+			rm -rf $PARTMAP
 	else
 	    echo ''
 	    echo ''
@@ -680,14 +709,14 @@ function build_fastboot_partmap()
 			echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
 			echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
 			echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-			echo "flash=mmc,${DEVNUM}:data:fat:0x3700000,0x0;" >> ${PARTMAP}
+			echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 		else
 			# spirom
 			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 			echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
             echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
             echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-            echo "flash=mmc,${DEVNUM}:data:fat:0x3700000,0x0;" >> ${PARTMAP}
+            echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 		fi
 
 		sleep 1.5
@@ -782,6 +811,24 @@ function complete_fastboot_reboot()
     popd > /dev/null
 }
 
+function build_fastboot_userdata()
+{
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo '# Fastboot userdata'
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+    sleep 1.5
+    pushd . > /dev/null
+    sudo fastboot flash userdata $RESULT_DIR/userdata.img
+    popd > /dev/null
+}
+
 function build_fastboot_system()
 {
 	echo ''
@@ -853,6 +900,11 @@ function build_function_main()
 		build_filesystem
 	fi
 
+    if [ ${CMD_V_USERDATA} == "yes" ]; then
+        CMD_V_BUILD_SEL="Make Userdata Image"
+        build_userdata
+    fi
+
 	if [ -d ${RESULT_DIR} ]; then
 		echo ""
 		echo '#########################################################'
@@ -897,6 +949,7 @@ CMD_V_APPLICATION_CLEAN=no
 CMD_V_BUILDROOT=no
 CMD_V_BUILDROOT_CLEAN=no
 CMD_V_FILESYSTEM=no
+CMD_V_USERDATA=no
 
 CMD_V_SDCARD_PACKAGING=no
 CMD_V_SDCARD_SELECT_DEV=
@@ -949,7 +1002,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     1c. Clean Build"       
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  2. 2ndboot+u-boot+kernel(+Build)   2c. Clean Build"
+		echo "  2. 2ndboot+u-boot+kernel(+Build)   2c. Clean Build(All)"
 		echo "     21.  u-boot(+Build)		21c. u-boot(+Clean Build)"
 		echo "     22.  kernel(+Build)		22c. kernel(+Clean Build)"
 		echo "     23.  2ndboot(+Make)"       
@@ -966,7 +1019,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     4c. Buildroot(+Clean Build)"       
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  5. Ramdisk(+Make)"
+		echo "  5. Filesystem(All)"
+		echo "     51. Ramdisk(Root)(+Make)"
+		echo "     52. Userdata(EXT4)(+Make)"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  6. eMMC Packaging(All)"
@@ -975,7 +1030,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     63. fastboot bootloader(u-boot)"
 		echo "     64. fastboot boot(kernel)"
 		echo "     65. fastboot system(rootfs)"
-		echo "     66. fastboot reboot"
+		echo "     66. fastboot data(userdata)"
+		echo "     67. fastboot reboot"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  0. Exit"
@@ -991,7 +1047,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
-			    CMD_V_FILESYSTEM=yes					
+			    CMD_V_FILESYSTEM=yes
+				CMD_V_USERDATA=yes
 			    ;;
 
 				1c) CMD_V_2NDBOOT=yes
@@ -1005,6 +1062,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					CMD_V_BUILDROOT=yes
 					CMD_V_BUILDROOT_CLEAN=yes
 				    CMD_V_FILESYSTEM=yes
+					CMD_V_USERDATA=yes
 				    ;;
 
 			#------------------------------------------------------------------------------------------------
@@ -1047,8 +1105,12 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			5)	CMD_V_FILESYSTEM=yes					;;
-
+			5)	CMD_V_FILESYSTEM=yes
+				CMD_V_USERDATA=yes
+				;;
+				51) CMD_V_FILESYSTEM=yes				;;
+				52) CMD_V_USERDATA=yes					;;
+				
 			#------------------------------------------------------------------------------------------------
 			6)	CMD_V_BUILD_NUM=-1
 				build_fastboot_partmap
@@ -1056,7 +1118,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				build_fastboot_uboot
 				build_fastboot_boot
 				build_fastboot_system					
-				complete_fastboot_reboot                ;;
+				build_fastboot_userdata				
+				complete_fastboot_reboot
+				;;
 				61)	CMD_V_BUILD_NUM=-1
 					build_fastboot_partmap				;;
 				62)	CMD_V_BUILD_NUM=-1
@@ -1067,7 +1131,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					build_fastboot_boot					;;
 				65)	CMD_V_BUILD_NUM=-1
 					build_fastboot_system				;;
-				66) CMD_V_BUILD_NUM=-1
+				66)	CMD_V_BUILD_NUM=-1
+					build_fastboot_userdata				;;
+				67) CMD_V_BUILD_NUM=-1
                     complete_fastboot_reboot        	;;
 
 			#------------------------------------------------------------------------------------------------
