@@ -148,7 +148,16 @@ CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
-CMD_V_KERNEL_MODULE=no
+
+if [ $BOARD_NAME == "avn_ref" ]; then
+	CMD_V_KERNEL_MODULE=no
+else
+	if [ $BOARD_NAME == "navi_ref" ]; then
+		CMD_V_KERNEL_MODULE=no
+	else
+		CMD_V_KERNEL_MODULE=yes
+	fi
+fi
 
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
@@ -958,7 +967,6 @@ CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
-CMD_V_KERNEL_MODULE=no
 
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
@@ -1063,7 +1071,6 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			1) CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
-			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes
@@ -1075,7 +1082,6 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
 				    CMD_V_KERNEL=yes 
-				    CMD_V_KERNEL_MODULE=yes
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
 					CMD_V_BUILDROOT=yes
@@ -1086,25 +1092,21 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			2) CMD_V_KERNEL=yes 
-			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_UBOOT=yes 
 			    ;;
 				2c) CMD_V_UBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes				
 					CMD_V_KERNEL=yes 
 					CMD_V_KERNEL_CLEAN=yes
-					CMD_V_KERNEL_MODULE=yes
 				    ;;
 				21) CMD_V_UBOOT=yes					    ;;
 				21c) CMD_V_UBOOT=yes
 				     CMD_V_UBOOT_CLEAN=yes				
 				     ;;
 				22) CMD_V_KERNEL=yes 						
-				     CMD_V_KERNEL_MODULE=yes
 					 ;;
 				22c) CMD_V_KERNEL=yes 
 					 CMD_V_KERNEL_CLEAN=yes
-					 CMD_V_KERNEL_MODULE=yes
  			       	 ;;
 				23) CMD_V_2NDBOOT=yes					;;
 
