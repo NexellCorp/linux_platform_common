@@ -633,16 +633,19 @@ function build_filesystem()
 			check_result
 		fi
 
-		echo ''
-		echo '# copy vpu module #'
-		cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-		check_result
+		if [ $BOARD_NAME == "avn_ref" ]; then
+			echo ''
+		else
+			echo ''
+			echo '# copy vpu module #'
+			cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+			check_result
 
-		echo ''
-        echo '# copy 3d module #'
-        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-        check_result
-		echo ''
+			echo ''
+	        echo '# copy 3d module #'
+	        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+	        check_result
+		fi
 
 		echo ''
 		echo '# copy mdev.conf #'
@@ -692,39 +695,39 @@ function build_fastboot_partmap()
 	if [ -f ${PARTMAP} ]; then
 			echo ""
 			rm -rf $PARTMAP
-	else
-	    echo ''
-	    echo ''
-	    echo '#########################################################'
-	    echo '#########################################################'
-	    echo '#'
-	    echo '# Make partmap'
-	    echo '#'
-	    echo '#########################################################'
-	    echo '#########################################################'
-
-		if [ $BOOT_DEV == "sdmmc" ]; then
-			# sdmmc
-			echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
-			echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
-			echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-			echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-			echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
-		else
-			# spirom
-			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
-			echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
-            echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-            echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-            echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
-		fi
-
-		sleep 1.5
-		pushd . > /dev/null
-
-		cat ${PARTMAP}
-		popd > /dev/null		
 	fi
+
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo '# Make partmap'
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+	if [ $BOOT_DEV == "sdmmc" ]; then
+		# sdmmc
+		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+	else
+		# spirom
+		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
+		echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+	fi
+
+	sleep 1.5
+	pushd . > /dev/null
+
+	cat ${PARTMAP}
+	popd > /dev/null		
 
     echo ''
     echo ''
