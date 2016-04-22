@@ -15,7 +15,7 @@ else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
 	echo "Supported chipset : s5p4418/s5p6818"
-    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref"
+    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
     echo "Supported board based on s5p6818 : drone/svt/avn_ref"
 	echo "Avaliable boot device : sdmmc/spirom"
     exit 0
@@ -31,13 +31,17 @@ if [ $1 == "s5p4418" ]; then
 		else
 	        if [ $2 == "avn_ref" ]; then
 	            echo ""
-	        else
-			    if [ $2 == "svt" ]; then
-			        echo ""
-			    else
-			        echo "Not supported board!"
-			        echo "Supported board : lepus/drone/svt/avn_ref"
-			        exit 0
+			else
+				if [ $2 == "avn_ref" ]; then
+					echo ""
+		        else
+				    if [ $2 == "svt" ]; then
+				        echo ""
+				    else
+				        echo "Not supported board!"
+				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
+				        exit 0
+					fi
 			    fi
 			fi
 		fi
@@ -72,7 +76,11 @@ if [ $3 == "sdmmc" ]; then
 	if [ $2 == "lepus" ]; then
 		DEVNUM=0
 	else
-		DEVNUM=2
+		if [ $2 == "navi_ref" ]; then
+			DEVNUM=0
+		else
+			DEVNUM=2
+		fi
 	fi
 else
 	if [ $3 == "spirom" ]; then
@@ -636,15 +644,19 @@ function build_filesystem()
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
 		else
-			echo ''
-			echo '# copy vpu module #'
-			cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-			check_result
+			if [ $BOARD_NAME == "navi_ref" ]; then
+				echo ''
+			else
+				echo ''
+				echo '# copy vpu module #'
+				cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+				check_result
 
-			echo ''
-	        echo '# copy 3d module #'
-	        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-	        check_result
+				echo ''
+		        echo '# copy 3d module #'
+		        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+		        check_result
+			fi
 		fi
 
 		echo ''
@@ -652,7 +664,11 @@ function build_filesystem()
 		if [ $BOARD_NAME == "lepus" ]; then
 			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 		else
-			cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+			if [ $BOARD_NAME == "navi_ref" ]; then
+				cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+			else
+				cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+			fi
 		fi
 		check_result
 		echo ''
