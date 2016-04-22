@@ -32,7 +32,7 @@ if [ $1 == "s5p4418" ]; then
 	        if [ $2 == "avn_ref" ]; then
 	            echo ""
 			else
-				if [ $2 == "avn_ref" ]; then
+				if [ $2 == "navi_ref" ]; then
 					echo ""
 		        else
 				    if [ $2 == "svt" ]; then
