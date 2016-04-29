@@ -275,8 +275,8 @@ function build_uboot_source()
 	pushd . > /dev/null
 
 	cd $UBOOT_DIR
-	make ${UBOOT_CONFIG_NAME}_config
-	make -j8 -sw
+	make ${UBOOT_CONFIG_NAME}_linux_config
+	make -j8 -sw CROSS_COMPILE=arm-cortex_a9-linux-gnueabi-
 	check_result
 	
 	cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
@@ -735,7 +735,7 @@ function build_fastboot_partmap()
 	if [ $BOOT_DEV == "sdmmc" ]; then
 		# sdmmc
 		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x77000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
