@@ -1,1 +1,0 @@
-../mpn/arm/aorscnd_n.asm

@@ -1,3 +1,0 @@
-0001-libbb-use-poll.h-instead-of-sys-poll.h.patch
-0002-network-ifconfig-include-linux-if_slip.h-instead-of-.patch
-0003-networking-libiproute-use-linux-if_packet.h-instead-.patch

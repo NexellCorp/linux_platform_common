@@ -1,8 +1,0 @@
-c-ctype.o: c-ctype.c ../src/config.h c-ctype.h \
- /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdbool.h
-
-../src/config.h:
-
-c-ctype.h:
-
-/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdbool.h:

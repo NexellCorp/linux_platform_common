@@ -1,1 +1,0 @@
-cmd_e2fsprogs/lib.a := rm -f e2fsprogs/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs e2fsprogs/lib.a e2fsprogs/chattr.o e2fsprogs/e2fs_lib.o e2fsprogs/fsck.o e2fsprogs/lsattr.o

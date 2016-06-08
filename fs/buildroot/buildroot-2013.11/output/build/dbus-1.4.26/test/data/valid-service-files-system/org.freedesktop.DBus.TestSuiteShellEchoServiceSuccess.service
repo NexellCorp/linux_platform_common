@@ -1,5 +1,0 @@
-[D-BUS Service]
-Name=org.freedesktop.DBus.TestSuiteShellEchoServiceSuccess
-Exec=/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/build/dbus-1.4.26/test/test-shell-service -test "that" 'we get' back --what "we put in"
-User=anyrandomuser
-

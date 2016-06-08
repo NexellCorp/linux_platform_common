@@ -1,1 +1,0 @@
-cmd_findutils/lib.a := rm -f findutils/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs findutils/lib.a findutils/find.o findutils/grep.o findutils/xargs.o

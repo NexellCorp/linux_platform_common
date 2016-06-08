@@ -1,5 +1,0 @@
-accelerated.lo: accelerated.c ../../config.h accelerated.h
-
-../../config.h:
-
-accelerated.h:

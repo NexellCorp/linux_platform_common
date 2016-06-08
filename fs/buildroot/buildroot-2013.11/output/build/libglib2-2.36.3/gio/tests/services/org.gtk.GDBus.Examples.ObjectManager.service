@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.gtk.GDBus.Examples.ObjectManager
-Exec=/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/build/libglib2-2.36.3/gio/tests/gdbus-example-objectmanager-server
