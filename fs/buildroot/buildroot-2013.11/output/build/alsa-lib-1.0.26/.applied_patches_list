@@ -1,0 +1,3 @@
+alsa-lib-avr32-bad-inline.patch
+alsa-lib-no-mmu.patch
+buildroot-libtool-v2.4.patch

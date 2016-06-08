@@ -1,0 +1,672 @@
+serial/bluetoothd-manager.o: serial/manager.c config.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/ctype.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/features.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdc-predef.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/predefs.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/cdefs.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/wordsize.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/gnu/stubs.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/gnu/stubs-soft.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/types.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/typesizes.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/endian.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/endian.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/byteswap.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/byteswap-16.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/xlocale.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dirent.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/dirent.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix1_lim.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/local_lim.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/limits.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stddef.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/errno.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/errno.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/errno.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/errno.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/errno.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/errno-base.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/fcntl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl-linux.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/time.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stat.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl2.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdio.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/libio.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/_G_config.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/wchar.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdarg.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdio_lim.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sys_errlist.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdio2.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdlib.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/waitflags.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/waitstatus.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/types.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/select.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/select.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigset.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/time.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/select2.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/sysmacros.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/pthreadtypes.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/alloca.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdlib-float.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdlib.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/string.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/string3.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/termios.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/termios.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ttydefaults.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/unistd.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix_opt.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/environments.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/confname.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/getopt.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/unistd.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/arpa/inet.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/netinet/in.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdint.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdint.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/wchar.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/socket.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/uio.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/uio.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket_type.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sockaddr.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/socket.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/sockios.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket2.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/in.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/param.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include-fixed/limits.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include-fixed/syslimits.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/limits.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix2_lim.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/signal.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/signum.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/siginfo.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigaction.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigcontext.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/sigcontext.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigstack.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ucontext.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigthread.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/param.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/param.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/param.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ioctl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/ioctls.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/ioctls.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/ioctls.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/ioctl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/ioctl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/ioctl.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/ioctl-types.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/stat.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/un.h \
+ lib/bluetooth/bluetooth.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/byteswap.h \
+ lib/bluetooth/sdp.h lib/bluetooth/sdp_lib.h lib/bluetooth/hci.h \
+ lib/bluetooth/rfcomm.h lib/bluetooth/uuid.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/galloca.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtypes.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib/glib-2.0/include/glibconfig.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmacros.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/float.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gversionmacros.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/garray.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gasyncqueue.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gthread.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gatomic.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gerror.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gquark.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbacktrace.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbase64.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbitlock.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbookmarkfile.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbytes.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gcharset.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gchecksum.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gconvert.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdataset.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdate.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdatetime.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtimezone.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdir.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/genviron.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gfileutils.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ggettext.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghash.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/glist.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmem.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gnode.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghmac.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gchecksum.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghook.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghostutils.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/giochannel.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmain.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gpoll.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gslist.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstring.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gunicode.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gutils.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gkeyfile.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmappedfile.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmarkup.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmessages.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/goption.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gpattern.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gprimes.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gqsort.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gqueue.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/grand.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gregex.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gscanner.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gsequence.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gshell.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gslice.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gspawn.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstrfuncs.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstringchunk.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtestutils.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gthreadpool.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtimer.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtrashstack.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtree.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gurifuncs.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gvarianttype.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gvariant.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gversion.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gallocator.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gcache.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gcompletion.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gmain.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/grel.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gthread.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/pthread.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sched.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sched.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/setjmp.h \
+ gdbus/gdbus.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib/dbus-1.0/include/dbus/dbus-arch-deps.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-macros.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-address.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-types.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-errors.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-protocol.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-bus.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-connection.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-memory.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-message.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-shared.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-misc.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-pending-call.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-server.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-signature.h \
+ /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-threads.h \
+ serial/../src/dbus-common.h src/adapter.h lib/bluetooth/hci_lib.h \
+ src/device.h src/log.h src/error.h serial/port.h serial/proxy.h \
+ src/storage.h src/textfile.h serial/manager.h src/sdpd.h \
+ src/glib-helper.h
+
+config.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/ctype.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/features.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdc-predef.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/predefs.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/cdefs.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/wordsize.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/gnu/stubs.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/gnu/stubs-soft.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/types.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/typesizes.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/endian.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/endian.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/byteswap.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/byteswap-16.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/xlocale.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dirent.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/dirent.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix1_lim.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/local_lim.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/limits.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stddef.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/errno.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/errno.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/errno.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/errno.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/errno.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/errno-base.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/fcntl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl-linux.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/time.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stat.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/fcntl2.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdio.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/libio.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/_G_config.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/wchar.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdarg.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdio_lim.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sys_errlist.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdio2.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdlib.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/waitflags.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/waitstatus.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/types.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/select.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/select.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigset.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/time.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/select2.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/sysmacros.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/pthreadtypes.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/alloca.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdlib-float.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/stdlib.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/string.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/string3.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/termios.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/termios.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ttydefaults.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/unistd.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix_opt.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/environments.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/confname.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/getopt.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/unistd.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/arpa/inet.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/netinet/in.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdint.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/stdint.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/wchar.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/socket.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/uio.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/uio.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket_type.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sockaddr.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/socket.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/sockios.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/socket2.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/in.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/param.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include-fixed/limits.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include-fixed/syslimits.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/limits.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/posix2_lim.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/signal.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/signum.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/siginfo.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigaction.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigcontext.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/sigcontext.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigstack.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ucontext.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sigthread.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/param.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/param.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/param.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/ioctl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/ioctls.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/ioctls.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/ioctls.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/linux/ioctl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm/ioctl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/asm-generic/ioctl.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/ioctl-types.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/stat.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sys/un.h:
+
+lib/bluetooth/bluetooth.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/byteswap.h:
+
+lib/bluetooth/sdp.h:
+
+lib/bluetooth/sdp_lib.h:
+
+lib/bluetooth/hci.h:
+
+lib/bluetooth/rfcomm.h:
+
+lib/bluetooth/uuid.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/galloca.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtypes.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib/glib-2.0/include/glibconfig.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmacros.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/float.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gversionmacros.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/garray.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gasyncqueue.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gthread.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gatomic.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gerror.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gquark.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbacktrace.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbase64.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbitlock.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbookmarkfile.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gbytes.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gcharset.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gchecksum.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gconvert.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdataset.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdate.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdatetime.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtimezone.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gdir.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/genviron.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gfileutils.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ggettext.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghash.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/glist.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmem.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gnode.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghmac.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gchecksum.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghook.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/ghostutils.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/giochannel.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmain.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gpoll.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gslist.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstring.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gunicode.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gutils.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gkeyfile.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmappedfile.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmarkup.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gmessages.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/goption.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gpattern.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gprimes.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gqsort.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gqueue.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/grand.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gregex.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gscanner.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gsequence.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gshell.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gslice.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gspawn.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstrfuncs.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gstringchunk.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtestutils.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gthreadpool.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtimer.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtrashstack.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gtree.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gurifuncs.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gvarianttype.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gvariant.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/gversion.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gallocator.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gcache.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gcompletion.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gmain.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/grel.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/glib-2.0/glib/deprecated/gthread.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/pthread.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/sched.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/sched.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/bits/setjmp.h:
+
+gdbus/gdbus.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib/dbus-1.0/include/dbus/dbus-arch-deps.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-macros.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-address.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-types.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-errors.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-protocol.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-bus.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-connection.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-memory.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-message.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-shared.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-misc.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-pending-call.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-server.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-signature.h:
+
+/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include/dbus-1.0/dbus/dbus-threads.h:
+
+serial/../src/dbus-common.h:
+
+src/adapter.h:
+
+lib/bluetooth/hci_lib.h:
+
+src/device.h:
+
+src/log.h:
+
+src/error.h:
+
+serial/port.h:
+
+serial/proxy.h:
+
+src/storage.h:
+
+src/textfile.h:
+
+serial/manager.h:
+
+src/sdpd.h:
+
+src/glib-helper.h:

@@ -1,0 +1,4 @@
+libmad-0.15.1b-mips-h-constraint-removal.patch
+libmad-0.15.1b-remove-deprecated-cflags.patch
+libmad-0.15.1b-thumb2-fixed-arm.patch
+libmad-0.15.1b-thumb2-imdct-arm.patch

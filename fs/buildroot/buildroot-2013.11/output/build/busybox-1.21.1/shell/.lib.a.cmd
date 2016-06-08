@@ -1,0 +1,1 @@
+cmd_shell/lib.a := rm -f shell/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs shell/lib.a shell/ash.o shell/ash_ptr_hack.o shell/cttyhack.o shell/hush.o shell/match.o shell/math.o shell/random.o shell/shell_common.o

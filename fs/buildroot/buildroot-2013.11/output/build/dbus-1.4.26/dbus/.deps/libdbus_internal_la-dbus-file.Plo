@@ -1,0 +1,28 @@
+libdbus_internal_la-dbus-file.lo: dbus-file.c ../config.h dbus-file.h \
+ ../dbus/dbus-string.h ../dbus/dbus-macros.h ../dbus/dbus-types.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stddef.h \
+ ../dbus/dbus-arch-deps.h ../dbus/dbus-memory.h \
+ /opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdarg.h \
+ ../dbus/dbus-errors.h ../dbus/dbus-protocol.h
+
+../config.h:
+
+dbus-file.h:
+
+../dbus/dbus-string.h:
+
+../dbus/dbus-macros.h:
+
+../dbus/dbus-types.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stddef.h:
+
+../dbus/dbus-arch-deps.h:
+
+../dbus/dbus-memory.h:
+
+/opt/crosstools/arm-cortex_a9-eabi-4.7-eglibc-2.18/lib/gcc/arm-cortex_a9-linux-gnueabi/4.7.4/include/stdarg.h:
+
+../dbus/dbus-errors.h:
+
+../dbus/dbus-protocol.h:

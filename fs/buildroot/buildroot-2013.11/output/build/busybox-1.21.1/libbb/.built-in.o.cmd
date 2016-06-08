@@ -1,0 +1,1 @@
+cmd_libbb/built-in.o :=  rm -f libbb/built-in.o; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar rcs libbb/built-in.o

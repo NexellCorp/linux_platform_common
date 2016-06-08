@@ -1,0 +1,1 @@
+cmd_libpwdgrp/lib.a := rm -f libpwdgrp/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs libpwdgrp/lib.a libpwdgrp/pwd_grp.o libpwdgrp/uidgid_get.o

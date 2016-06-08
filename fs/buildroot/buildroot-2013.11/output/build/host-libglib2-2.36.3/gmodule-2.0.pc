@@ -1,0 +1,14 @@
+prefix=/home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+gmodule_supported=true
+
+Name: GModule
+Description: Dynamic module loader for GLib
+Requires: glib-2.0
+Version: 2.36.3
+Libs: -L${libdir} -Wl,--export-dynamic -lgmodule-2.0 -pthread
+Libs.private: -ldl
+Cflags: -pthread

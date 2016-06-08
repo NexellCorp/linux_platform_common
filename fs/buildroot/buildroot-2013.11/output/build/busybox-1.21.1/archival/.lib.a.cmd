@@ -1,0 +1,1 @@
+cmd_archival/lib.a := rm -f archival/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs archival/lib.a archival/ar.o archival/bbunzip.o archival/bzip2.o archival/cpio.o archival/gzip.o archival/tar.o archival/unzip.o

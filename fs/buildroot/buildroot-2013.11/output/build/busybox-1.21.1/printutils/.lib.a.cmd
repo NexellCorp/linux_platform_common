@@ -1,0 +1,1 @@
+cmd_printutils/lib.a := rm -f printutils/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs printutils/lib.a printutils/lpd.o printutils/lpr.o

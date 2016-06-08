@@ -1,0 +1,1 @@
+cmd_mailutils/lib.a := rm -f mailutils/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs mailutils/lib.a mailutils/mail.o mailutils/makemime.o mailutils/popmaildir.o mailutils/reformime.o mailutils/sendmail.o

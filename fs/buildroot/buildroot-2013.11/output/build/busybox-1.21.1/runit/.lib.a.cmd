@@ -1,0 +1,1 @@
+cmd_runit/lib.a := rm -f runit/lib.a; /home/chris/work/bsp/lollipop-avn_ref_4330_dev/linux/platform/common/fs/buildroot/buildroot-2013.11/output/host/usr/bin/arm-cortex_a9-linux-gnueabi-ar  rcs runit/lib.a runit/chpst.o runit/runsv.o runit/runsvdir.o runit/sv.o runit/svlogd.o
