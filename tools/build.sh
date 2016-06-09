@@ -714,6 +714,7 @@ function build_filesystem()
 				cp -av $EXTRA_DIR/wpa_open.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_open.sh
 				cp -av $EXTRA_DIR/wpa_psk.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_psk.sh
 				cp -av $EXTRA_DIR/testmtv $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/testmtv
+				cp -av $EXTRA_DIR/hwreg_cmd $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/hwreg_cmd
 			else
 				if [ $BOARD_NAME == "navi_ref" ]; then
 					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
