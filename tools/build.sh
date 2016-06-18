@@ -336,7 +336,12 @@ function build_kernel_source()
 
 	pushd . > /dev/null
 	cd $KERNEL_DIR
-	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+
+	if [ -f $KERNEL_DIR/.config ]; then
+		echo ""
+	else
+		make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+	fi
 	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 
 	make ARCH=arm uImage -j8 -sw
