@@ -15,7 +15,7 @@ else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
 	echo "Supported chipset : s5p4418/s5p6818"
-    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
+    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref/iA1/iA2"
     echo "Supported board based on s5p6818 : drone/svt/avn_ref"
 	echo "Avaliable boot device : sdmmc/spirom"
     exit 0
@@ -38,9 +38,17 @@ if [ $1 == "s5p4418" ]; then
 				    if [ $2 == "svt" ]; then
 				        echo ""
 				    else
-				        echo "Not supported board!"
-				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
-				        exit 0
+						if [ $2 == "iA1" ]; then
+							echo ""
+				        else
+						    if [ $2 == "iA2" ]; then
+						        echo ""
+						    else
+						        echo "Not supported board!"
+						        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref/iA1/iA2"
+						        exit 0
+							fi
+					    fi
 					fi
 			    fi
 			fi
@@ -79,25 +87,33 @@ if [ $3 == "sdmmc" ]; then
 		if [ $2 == "navi_ref" ]; then
 			DEVNUM=0
 		else
-			DEVNUM=2
+			if [ $2 == "iA1" ]; then
+				DEVNUM=0
+			else
+				if [ $2 == "iA2" ]; then
+					DEVNUM=0
+				else
+					DEVNUM=2
+				fi
+			fi
 		fi
 	fi
 else
-	if [ $3 == "spirom" ]; then
-#		if [ $2 == "drone" ]; then
-#			DEVNUM=0
-#		else
-#			if [ $2 == "lepus" ]; then
-#				DEVNUM=0
-#			else
+	if [ $3 == "spi" ]; then
+		if [ $2 == "iA1" ]; then
+			DEVNUM=0
+		else
+			if [ $2 == "iA2" ]; then
+				DEVNUM=0
+			else
 				if [ $2 == "svt" ]; then
 					DEVNUM=2
 				else
 					echo "$3 is not supported in $BOARD_NAME"
 					exit 0
 				fi
-#			fi
-#		fi
+			fi
+		fi
 	else
 		echo "Not supported boot device!"
 		echo "Avaliable boot device : sdmmc/spirom"
@@ -105,7 +121,7 @@ else
 	fi
 fi
 
-UBOOT_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
+UBOOT_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}_linux
 KERNEL_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
  
 UBOOT_DIR=$TOP/bootloader/u-boot-${UBOOT_VER}
@@ -122,20 +138,22 @@ FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
 TOOLS_DIR=$TOP/platform/common/tools
 EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
-RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
+RESULT_DIR=$TOP/result_${BOARD_NAME}
 
 # Kbyte
-RAMDISK_SIZE=32768
+RAMDISK_SIZE=12288
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
+
+USERDATA_DIR=$RESULT_DIR/userdata
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
-# Byte
-USERDATA_SIZE=7516192768
+# 2GByte
+USERDATA_SIZE=2147483648
 
 MAKE_EXT4FS=$TOOLS_DIR/bin/make_ext4fs
 NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
 NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${BOOT_DEV}.txt
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
-SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
+SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
 
 USE_FFMPEG=yes
@@ -148,17 +166,7 @@ CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
-
-if [ $BOARD_NAME == "avn_ref" ]; then
-	CMD_V_KERNEL_MODULE=no
-else
-	if [ $BOARD_NAME == "navi_ref" ]; then
-		CMD_V_KERNEL_MODULE=no
-	else
-		CMD_V_KERNEL_MODULE=yes
-	fi
-fi
-
+CMD_V_KERNEL_MODULE=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
@@ -275,7 +283,7 @@ function build_uboot_source()
 	pushd . > /dev/null
 
 	cd $UBOOT_DIR
-	make ${UBOOT_CONFIG_NAME}_linux_config
+	make ${UBOOT_CONFIG_NAME}_config
 	make -j8 -sw CROSS_COMPILE=arm-cortex_a9-linux-gnueabi-
 	check_result
 	
@@ -341,11 +349,27 @@ function build_kernel_module()
 
 	sleep 1.5
 
+	#pushd . > /dev/null
+	#cd $MODULES_DIR/coda960
+	#make ARCH=arm -j4 -sw
+	#check_result
+	#popd > /dev/null
+
 	pushd . > /dev/null
-	cd $MODULES_DIR/coda960
-	make ARCH=arm -j4 -sw
+	cd $MODULES_DIR/fc8080_tdmb
+	./build.sh
 	check_result
 	popd > /dev/null
+
+	pushd . > /dev/null
+	cd $MODULES_DIR/fc8080_tpeg
+	./build.sh
+	check_result
+	popd > /dev/null
+
+
+	cp -av $MODULES_DIR/fc8080_tdmb/fc8080_tdmb.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+	cp -av $MODULES_DIR/fc8080_tpeg/fc8080_tpeg.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 }
 
 function build_kernel_current_menuconfig()
@@ -443,41 +467,27 @@ function build_application()
 	
 	sleep 1.5
 
+	rm $APPLICATION_4418_DIR/fc8080_tdmb/fccon
+	rm $APPLICATION_4418_DIR/fc8080_tpeg/fccont 
+	rm $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/fccon
+	rm $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/fccont
+
 	pushd . > /dev/null
-
-	cd $LIBRARY_4418_DIR/src
-	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-		make clean
-	fi
+	cd $APPLICATION_4418_DIR/fc8080_tdmb
+	make clean
 	make
 	check_result
-
-	if [ $CHIPSET_NAME == "s5p6818" ]; then
-	    cd $LIBRARY_6818_DIR/src
-	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-	        make clean
-	    fi
-	    make
-	    check_result
-	fi
-
-	cd $APPLICATION_4418_DIR
-	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-		make clean
-	fi
-	make
-	check_result
-	
-	if [ $CHIPSET_NAME == "s5p6818" ]; then
-	    cd $APPLICATION_6818_DIR
-	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-	        make clean
-	    fi
-	    make
-	    check_result
-	fi
-
 	popd > /dev/null
+
+	pushd . > /dev/null
+	cd $APPLICATION_4418_DIR/fc8080_tpeg
+	#make clean
+	make
+	check_result
+	popd > /dev/null
+
+	cp -av $APPLICATION_4418_DIR/fc8080_tdmb/fccon $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+	# cp -av $APPLICATION_4418_DIR/fc8080_tpeg/fccont $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 }
 
 function build_buildroot()
@@ -491,7 +501,7 @@ function build_buildroot()
         echo '# Clean buildroot '
         echo '#'
         echo '#########################################################'
-		make clean
+		# make clean
 	fi
 
     echo ''
@@ -509,7 +519,7 @@ function build_buildroot()
 	else
 		cp -av ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
 	fi
-	make
+	# make
     check_result
 }
 
@@ -536,13 +546,18 @@ function build_userdata()
 
 	sleep 1.5
 
+	if [ -d $RESULT_DIR/userdata ];
+	then echo ''
+	else mkdir $USERDATA_DIR
+	fi
+
     if [ -f ${USERDATA_IMAGE} ]; then
         rm -f ${USERDATA_IMAGE}
     fi
 
 	pushd . > /dev/null
-	echo "$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE"
-	$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE
+	echo "$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE $USERDATA_DIR"
+	$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE $USERDATA_DIR
 }
 
 function build_filesystem()
@@ -567,152 +582,32 @@ function build_filesystem()
 		rm -f ${RESULT_DIR}/ramdisk.gz
 	fi
 
-	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
-			copy_app $APPLICATION_4418_DIR/adc_test adc_test
-			copy_app $APPLICATION_4418_DIR/audio_test audio_test
-			copy_app $APPLICATION_4418_DIR/fb_test fb_test
-			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
-			if [ $CHIPSET_NAME == "s5p6818" ]; then
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
-			else
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
-			fi
+	pushd . > /dev/null
 
-			if [ $BOARD_NAME == "drone" ]; then
-				copy_app $APPLICATION_4418_DIR/spi_test spi_test
-			fi
+	cd $FILESYSTEM_DIR
+	cp buildroot/scripts/mk_ramfs.sh buildroot/out/
+	cd buildroot/out/
 
-			if [ $USE_FFMPEG == "yes" ]; then
-				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
-			fi
-
-			copy_app $APPLICATION_4418_DIR/vip_test vip_test
-
-			if [ $CHIPSET_NAME == "s5p4418" ]; then
-				if [ $USE_FFMPEG == "yes" ]; then
-					copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
-					cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-				fi
-			else
-				if [ $CHIPSET_NAME == "s5p6818" ]; then
-					if [ $USE_FFMPEG == "yes" ]; then
-						copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
-					fi
-					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
-					cp -av $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-				fi
-			fi
-
-            if [ -d $APPLICATION_4418_DIR/cec_test ]; then
-                cd $APPLICATION_4418_DIR/cec_test/
-				cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				check_result
-			fi
-
-            if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
-                cd $APPLICATION_4418_DIR/jpeg_test/
-                cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-                check_result
-            fi
-
-			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
-				cd $APPLICATION_4418_DIR/v4l2_test/
-				if [ $CHIPSET_NAME == "s5p4418" ]; then
-					cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				else
-					if [ $CHIPSET_NAME == "s5p6818" ]; then
-						cp -av camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-					fi
-				fi
-				check_result
-			fi
-		
-		echo ''
-		echo '# copy all libraries #'
-		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		check_result
-
-		if [ $CHIPSET_NAME == "s5p6818" ]; then
-			# Need by s5p6818 target
-			cp -av $LIBRARY_4418_DIR/lib/libnxadc.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxjpeg.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxnmeaparser.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libhevcdec.a $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-		fi
-
-		if [ $BOARD_NAME == "avn_ref" ]; then
-			echo ''
-		else
-			if [ $BOARD_NAME == "navi_ref" ]; then
-				echo ''
-			else
-				echo ''
-				echo '# copy vpu module #'
-				cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-				check_result
-
-				echo ''
-		        echo '# copy 3d module #'
-		        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-		        check_result
-			fi
-		fi
-
-		echo ''
-		echo '# copy mdev.conf #'
-		if [ $BOARD_NAME == "lepus" ]; then
-			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
-		else
-			if [ $BOARD_NAME == "navi_ref" ]; then
-				cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
-			else
-				cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
-			fi
-		fi
-		check_result
-		echo ''
-
-		pushd . > /dev/null
-		cd $FILESYSTEM_DIR
-		cp buildroot/scripts/mk_ramfs.sh buildroot/out/
-		cd buildroot/out/
-
-		if [ -d mnt ]; then
-			sudo rm -rf mnt
-		fi
-
-		chmod 755 ./*.sh
-		./mk_ramfs.sh -r rootfs -s ${RAMDISK_SIZE}
-
-		popd > /dev/null
-
-		echo ''
-		echo ''
-		echo '#########################################################'
-		echo "# Copy built images"
-		echo '#########################################################'
-		cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
-		check_result
-		cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
-		check_result
-		cp -av ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
-		check_result
-	else
-		echo '##########################################################'
-		echo '# Error : No "./fs/buildroot/out" folder.'
-		echo '# Please build buildroot before making ramdisk filesystem'
-		echo '##########################################################'
+	if [ -d mnt ]; then
+		sudo rm -rf mnt
 	fi
+
+	chmod 755 ./*.sh
+	./mk_ramfs.sh -r rootfs -s ${RAMDISK_SIZE}
+
+	popd > /dev/null
+
+	echo ''
+	echo ''
+	echo '#########################################################'
+	echo "# Copy built images"
+	echo '#########################################################'
+	cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
+	check_result
+	cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
+	check_result
+	cp -av ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
+	check_result
 }
 
 function build_fastboot_partmap()
@@ -736,9 +631,9 @@ function build_fastboot_partmap()
 		# sdmmc
 		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x77000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0xF00000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x1000000,0x3200000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x4200000,0x0;" >> ${PARTMAP}
 	else
 		# spirom
 		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
@@ -957,6 +852,7 @@ function build_function_main()
 	echo "#     Start Time : "${StartTime}"	"
 	echo "#     End Time   : "${EndTime}"	"
 	echo '#########################################################'
+	sleep 2
 }
 
 function command_reset()
@@ -967,7 +863,7 @@ CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
-
+CMD_V_KERNEL_MODULE=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
@@ -1016,7 +912,7 @@ fi
 if [ ${BOARD_NAME} != "build_exit" ]; then
 	while [ -z $CMD_V_BUILD_NUM ]
 	do
-		clear
+		#clear
 		echo "******************************************************************** "
 		echo "[Build Function Menu]"
 		echo "  TOP Directory : $TOP"
@@ -1071,6 +967,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			1) CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
+			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes
@@ -1092,6 +989,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			2) CMD_V_KERNEL=yes 
+			    CMD_V_KERNEL_MODULE=yes
 			    CMD_V_UBOOT=yes 
 			    ;;
 				2c) CMD_V_UBOOT=yes
@@ -1104,8 +1002,10 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				     CMD_V_UBOOT_CLEAN=yes				
 				     ;;
 				22) CMD_V_KERNEL=yes 						
+				       CMD_V_KERNEL_MODULE=yes
 					 ;;
 				22c) CMD_V_KERNEL=yes 
+				         CMD_V_KERNEL_MODULE=yes
 					 CMD_V_KERNEL_CLEAN=yes
  			       	 ;;
 				23) CMD_V_2NDBOOT=yes					;;
@@ -1143,17 +1043,23 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				complete_fastboot_reboot
 				;;
 				61)	CMD_V_BUILD_NUM=-1
-					build_fastboot_partmap				;;
+					build_fastboot_partmap				
+					complete_fastboot_reboot	;;
 				62)	CMD_V_BUILD_NUM=-1
-					build_fastboot_2ndboot				;;
+					build_fastboot_2ndboot		
+					complete_fastboot_reboot	;;
 				63)	CMD_V_BUILD_NUM=-1
-					build_fastboot_uboot				;;
+					build_fastboot_uboot		
+					complete_fastboot_reboot	;;
 				64)	CMD_V_BUILD_NUM=-1
-					build_fastboot_boot					;;
+					build_fastboot_boot			
+					complete_fastboot_reboot	;;
 				65)	CMD_V_BUILD_NUM=-1
-					build_fastboot_system				;;
+					build_fastboot_system		
+					complete_fastboot_reboot	;;
 				66)	CMD_V_BUILD_NUM=-1
-					build_fastboot_userdata				;;
+					build_fastboot_userdata		
+					complete_fastboot_reboot	;;
 				67) CMD_V_BUILD_NUM=-1
                     complete_fastboot_reboot        	;;
 

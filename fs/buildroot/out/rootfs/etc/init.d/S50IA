@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# Start the network....
+#
+
+case "$1" in
+  start)
+ 	echo "Starting MTVCORE..."
+	#sleep 1
+	insmod /root/fc8080_tdmb.ko
+	#sleep 1
+	#insmod /root/fc8080_tpeg.ko	
+	#sleep 1
+	#./usr/bin/MTVCore.out
+	;;
+  stop)
+	;;
+  restart|reload)
+	"$0" stop
+	"$0" start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+
