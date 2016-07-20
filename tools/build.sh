@@ -638,9 +638,8 @@ function build_fastboot_partmap()
 		# spirom
 		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 		echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+		echo "flash=eeprom,0:kernel:raw:0x80000,0x280000;" >> ${PARTMAP}
+		echo "flash=eeprom,0:ramdisk:raw:0x300000,0x4fffff;" >> ${PARTMAP}
 	fi
 
 	sleep 1.5

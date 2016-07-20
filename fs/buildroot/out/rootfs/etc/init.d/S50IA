@@ -9,7 +9,7 @@ case "$1" in
 	#sleep 1
 	insmod /root/fc8080_tdmb.ko
 	#sleep 1
-	#insmod /root/fc8080_tpeg.ko	
+	insmod /root/fc8080_tpeg.ko	
 	#sleep 1
 	#./usr/bin/MTVCore.out
 	;;
