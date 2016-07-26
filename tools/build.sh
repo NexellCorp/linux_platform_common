@@ -14,10 +14,9 @@ if [ $# -ge 3 ]; then
 else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
-	echo "Supported chipset : s5p4418/s5p6818"
-    echo "Supported board based on s5p4418 : corona/lepus/drone/svt/avn_ref/navi_ref"
-    echo "Supported board based on s5p6818 : drone/svt/avn_ref"
-	echo "Avaliable boot device : sdmmc/spirom"
+	echo "Supported chipset : s5p4418(nxp4330)"
+    echo "Supported board based on s5p4418 : corona/lepus/drone/avn_ref/navi_ref"
+	echo "Avaliable boot device : sdmmc/spi"
     exit 0
 fi
 
@@ -39,40 +38,18 @@ if [ $1 == "s5p4418" ]; then
 					if [ $2 == "navi_ref" ]; then
 						echo ""
 			        else
-					    if [ $2 == "svt" ]; then
-					        echo ""
-					    else
-					        echo "Not supported board!"
-					        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
-					        exit 0
-						fi
+				        echo "Not supported board!"
+				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
+				        exit 0
 				    fi
 				fi
 			fi
 		fi
 	fi
 else
-	if [ $1 == "s5p6818" ]; then
-		if [ $2 == "drone" ]; then
-		    echo ""
-		else
-		    if [ $2 == "avn_ref" ]; then
-		        echo ""
-		    else
-		        if [ $2 == "svt" ]; then
-		            echo ""
-		        else
-		            echo "Not supported board!"
-		            echo "Supported board : drone/svt/avn_ref"
-		            exit 0
-		        fi
-			fi
-	    fi
-	else
-		echo "Not supported chipset!"
-		echo "Supported chipset : s5p4418/s5p6818"
-		exit 0
-	fi
+	echo "Not supported chipset!"
+	echo "Supported chipset : s5p4418/s5p6818"
+	exit 0
 fi
 
 # Confirm boot device
@@ -92,24 +69,20 @@ if [ $3 == "sdmmc" ]; then
 		fi
 	fi
 else
-	if [ $3 == "spirom" ]; then
-#		if [ $2 == "drone" ]; then
-#			DEVNUM=0
-#		else
-#			if [ $2 == "lepus" ]; then
-#				DEVNUM=0
-#			else
-				if [ $2 == "svt" ]; then
-					DEVNUM=2
-				else
-					echo "$3 is not supported in $BOARD_NAME"
-					exit 0
-				fi
-#			fi
-#		fi
+	if [ $3 == "spi" ]; then
+		if [ $2 == "corona" ]; then
+			echo ""
+		else
+			if [ $2 == "lepus" ]; then
+				DEVNUM=0
+			else
+				echo "$3 is not supported in $BOARD_NAME"
+				exit 0
+			fi
+		fi
 	else
 		echo "Not supported boot device!"
-		echo "Avaliable boot device : sdmmc/spirom"
+		echo "Avaliable boot device : sdmmc/spi"
 		exit 0
 	fi
 fi
@@ -134,7 +107,7 @@ TOOLS_DIR=$TOP/platform/common/tools
 EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
-RAMDISK_SIZE=40960
+RAMDISK_SIZE=32768
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
@@ -477,15 +450,6 @@ function build_application()
 	make
 	check_result
 
-	if [ $CHIPSET_NAME == "s5p6818" ]; then
-	    cd $LIBRARY_6818_DIR/src
-	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-	        make clean
-	    fi
-	    make
-	    check_result
-	fi
-
 	cd $APPLICATION_4418_DIR
 	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 		make clean
@@ -493,15 +457,6 @@ function build_application()
 	make
 	check_result
 	
-	if [ $CHIPSET_NAME == "s5p6818" ]; then
-	    cd $APPLICATION_6818_DIR
-	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-	        make clean
-	    fi
-	    make
-	    check_result
-	fi
-
 	popd > /dev/null
 }
 
@@ -533,7 +488,7 @@ function build_buildroot()
 		echo ""
 	else
 		if [ ${BOARD_NAME} == "corona"]; then
-			cp -av ../configs/br.2013.11.cortex_a9_glibc_corona_pkg.config
+			cp -av ../configs/br.2013.11.cortex_a9_glibc_corona_pkg.config .config
 		else
 			cp -av ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
 		fi
@@ -600,87 +555,43 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
-			copy_app $APPLICATION_4418_DIR/adc_test adc_test
-			copy_app $APPLICATION_4418_DIR/audio_test audio_test
-			copy_app $APPLICATION_4418_DIR/fb_test fb_test
-			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
-			if [ $CHIPSET_NAME == "s5p6818" ]; then
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
-			else
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
-			fi
+#			copy_app $APPLICATION_4418_DIR/adc_test adc_test
+#			copy_app $APPLICATION_4418_DIR/audio_test audio_test
+#			copy_app $APPLICATION_4418_DIR/fb_test fb_test
+#			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
+#			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
+#			copy_app $APPLICATION_4418_DIR/spi_test spi_test
 
-			if [ $BOARD_NAME == "drone" ]; then
-				copy_app $APPLICATION_4418_DIR/spi_test spi_test
-			fi
+#			if [ $USE_FFMPEG == "yes" ]; then
+#				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+#				copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
+				cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+#			fi
 
-			if [ $USE_FFMPEG == "yes" ]; then
-				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
-			fi
+#			copy_app $APPLICATION_4418_DIR/vip_test vip_test
 
-			copy_app $APPLICATION_4418_DIR/vip_test vip_test
+#           if [ -d $APPLICATION_4418_DIR/cec_test ]; then
+#                cd $APPLICATION_4418_DIR/cec_test/
+#				cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+#				check_result
+#			fi
 
-			if [ $CHIPSET_NAME == "s5p4418" ]; then
-				if [ $USE_FFMPEG == "yes" ]; then
-					copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
-					cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-				fi
-			else
-				if [ $CHIPSET_NAME == "s5p6818" ]; then
-					if [ $USE_FFMPEG == "yes" ]; then
-						copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
-					fi
-					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
-					cp -av $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-				fi
-			fi
+#           if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
+#               cd $APPLICATION_4418_DIR/jpeg_test/
+#               cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+#               check_result
+#           fi
 
-            if [ -d $APPLICATION_4418_DIR/cec_test ]; then
-                cd $APPLICATION_4418_DIR/cec_test/
-				cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				check_result
-			fi
-
-            if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
-                cd $APPLICATION_4418_DIR/jpeg_test/
-                cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-                check_result
-            fi
-
-			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
-				cd $APPLICATION_4418_DIR/v4l2_test/
-				if [ $CHIPSET_NAME == "s5p4418" ]; then
-					cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				else
-					if [ $CHIPSET_NAME == "s5p6818" ]; then
-						cp -av camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-					fi
-				fi
-				check_result
-			fi
+#			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
+#				cd $APPLICATION_4418_DIR/v4l2_test/
+#				cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+#				check_result
+#			fi
 		
 		echo ''
-		echo '# copy all libraries #'
-		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		check_result
-
-		if [ $CHIPSET_NAME == "s5p6818" ]; then
-			# Need by s5p6818 target
-			cp -av $LIBRARY_4418_DIR/lib/libnxadc.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxjpeg.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxnmeaparser.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libhevcdec.a $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-		fi
+#		echo '# copy all libraries #'
+#		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+#		check_result
 
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
@@ -718,8 +629,8 @@ function build_filesystem()
 				cp -av $EXTRA_DIR/wpa_scan.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_scan.sh
 				cp -av $EXTRA_DIR/wpa_open.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_open.sh
 				cp -av $EXTRA_DIR/wpa_psk.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_psk.sh
-				cp -av $EXTRA_DIR/testmtv $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/testmtv
-				cp -av $EXTRA_DIR/hwreg_cmd $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/hwreg_cmd
+#				cp -av $EXTRA_DIR/testmtv $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/testmtv
+#				cp -av $EXTRA_DIR/hwreg_cmd $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/hwreg_cmd
 			else
 				if [ $BOARD_NAME == "navi_ref" ]; then
 					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
@@ -789,12 +700,20 @@ function build_fastboot_partmap()
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 	else
-		# spirom
-		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
-		echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+		# spi
+		if [ $BOARD_NAME == "corona" ]; then
+			# SPI Flash Size = 16MB, Reserved : 0xFE0000 ~ 0xFFFFFF
+			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
+			echo "flash=eeprom,0:bootloader:boot:0x10000,0x30000;" >> ${PARTMAP}
+			echo "flash=eeprom,0:kernel:raw:0x40000,0x400000;" >> ${PARTMAP}
+			echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000;" >> ${PARTMAP}
+		else
+	        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
+	        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
+	        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+	        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+	        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+		fi
 	fi
 
 	sleep 1.5
@@ -890,20 +809,22 @@ function complete_fastboot_reboot()
 
 function build_fastboot_userdata()
 {
-    echo ''
-    echo ''
-    echo '#########################################################'
-    echo '#########################################################'
-    echo '#'
-    echo '# Fastboot userdata'
-    echo '#'
-    echo '#########################################################'
-    echo '#########################################################'
+	if [ ${BOOT_DEV} == "sdmmc" ]; then
+	    echo ''
+	    echo ''
+	    echo '#########################################################'
+	    echo '#########################################################'
+	    echo '#'
+	    echo '# Fastboot userdata'
+	    echo '#'
+	    echo '#########################################################'
+	    echo '#########################################################'
 
-    sleep 1.5
-    pushd . > /dev/null
-    sudo fastboot flash userdata $RESULT_DIR/userdata.img
-    popd > /dev/null
+	    sleep 1.5
+	    pushd . > /dev/null
+	    sudo fastboot flash userdata $RESULT_DIR/userdata.img
+	    popd > /dev/null
+	fi
 }
 
 function build_fastboot_system()
@@ -978,8 +899,10 @@ function build_function_main()
 	fi
 
     if [ ${CMD_V_USERDATA} == "yes" ]; then
-        CMD_V_BUILD_SEL="Make Userdata Image"
-        build_userdata
+	    if [ ${BOOT_DEV} == "sdmmc" ]; then
+	        CMD_V_BUILD_SEL="Make Userdata Image"
+	        build_userdata
+		fi
     fi
 
 	if [ -d ${RESULT_DIR} ]; then
@@ -1132,7 +1055,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "--------------------------------------------------------------------"
 		echo "  5. Filesystem(All)"
 		echo "     51. Ramdisk(Root)(+Make)"
-		echo "     52. Userdata(EXT4)(+Make)"
+		if [ ${BOOT_DEV} == "sdmmc" ]; then
+			echo "     52. Userdata(EXT4)(+Make)"
+		fi
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  6. eMMC Packaging(All)"
@@ -1140,8 +1065,10 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     62. fastboot secondboot(2ndboot)"
 		echo "     63. fastboot bootloader(u-boot)"
 		echo "     64. fastboot boot(kernel)"
-		echo "     65. fastboot system(rootfs)"
-		echo "     66. fastboot data(userdata)"
+		echo "     65. fastboot system(rootfs ramdisk)"
+		if [ ${BOOT_DEV} == "sdmmc" ]; then
+			echo "     66. fastboot data(userdata)"
+		fi
 		echo "     67. fastboot reboot"
 		echo " "
 		echo "--------------------------------------------------------------------"
