@@ -199,6 +199,7 @@ function build_ramdisk()
 	make_node=$8
 	ext_mk_sh=$9
 	root_size=$(echo $(du -s $root_path) | cut -f1 -d" ")
+	over_size=$((root_size - disk_size))
 
 	# check path's permission
 	check_permission_w $root_path
@@ -220,6 +221,7 @@ function build_ramdisk()
 	if [ "$root_size" -gt "$disk_size" ]; then
 		echo    ""
 		echo -e " FAIL: $root_path($root_size) is over ramdisk image($disk_size) \n"
+		echo -e " Over size : ${over_size} \n"
 		exit 1;
 	fi
 
