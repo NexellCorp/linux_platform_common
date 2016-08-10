@@ -259,7 +259,7 @@ function build_uboot_source()
 
 	cd $UBOOT_DIR
 	make ${UBOOT_CONFIG_NAME}_config
-	make -j8 -sw
+	make -j8 -sw CROSS_COMPILE=arm-cortex_a9-linux-gnueabi-
 	check_result
 	
 	cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
