@@ -112,7 +112,8 @@ RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
 # sudo fastboot getvar capacity.mmc.sd0
-EMMC_SIZE=7818182656
+#EMMC_SIZE=7818182656
+EMMC_SIZE=3959422976
 SYSTEM_SIZE=57671680
 
 MAKE_EXT4FS=$TOOLS_DIR/bin/make_ext4fs
@@ -561,13 +562,8 @@ function build_filesystem()
 #			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
 #			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
 #			copy_app $APPLICATION_4418_DIR/spi_test spi_test
-
-#			if [ $USE_FFMPEG == "yes" ]; then
-#				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
-#				copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
-				cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-#			fi
-
+#			copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+#			copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
 #			copy_app $APPLICATION_4418_DIR/vip_test vip_test
 
 #           if [ -d $APPLICATION_4418_DIR/cec_test ]; then
@@ -587,7 +583,11 @@ function build_filesystem()
 #				cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 #				check_result
 #			fi
-		
+
+            if [ $USE_FFMPEG == "yes" ]; then
+                cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+            fi
+
 		echo ''
 #		echo '# copy all libraries #'
 #		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
