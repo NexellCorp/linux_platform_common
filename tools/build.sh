@@ -589,9 +589,9 @@ function build_filesystem()
             fi
 
 		echo ''
-#		echo '# copy all libraries #'
-#		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-#		check_result
+		echo '# copy all libraries #'
+		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		check_result
 
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
