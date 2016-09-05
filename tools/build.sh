@@ -105,9 +105,10 @@ FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
 TOOLS_DIR=$TOP/platform/common/tools
 EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
+EXTENSION_PKG_DIR=$TOP/platform/common/fs/buildroot/fs/ext_pkg
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
-RAMDISK_SIZE=32768
+RAMDISK_SIZE=56320
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
@@ -642,6 +643,11 @@ function build_filesystem()
 		check_result
 		echo ''
 
+		echo ''
+		echo '# copy extension packages #'
+		cp -av $EXTENSION_PKG_DIR/* $FILESYSTEM_DIR/buildroot/out/rootfs/
+		check_result
+
 		pushd . > /dev/null
 		cd $FILESYSTEM_DIR
 		cp buildroot/scripts/mk_ramfs.sh buildroot/out/
@@ -697,8 +703,8 @@ function build_fastboot_partmap()
 		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000;" >> ${PARTMAP}
+		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0;" >> ${PARTMAP}
 	else
 		# spi
 		if [ $BOARD_NAME == "corona" ]; then
