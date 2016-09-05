@@ -5,7 +5,7 @@ TOP=`pwd`
 # Version information
 UBOOT_VER=2014.07
 KERNEL_VER=3.4.39
-BUILDROOT_VER=2013.11
+BUILDROOT_VER=2015.02
 
 if [ $# -ge 3 ]; then
     CHIPSET_NAME=$1
@@ -17,6 +17,7 @@ else
 	echo "Supported chipset : s5p4418/s5p6818"
     echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
     echo "Supported board based on s5p6818 : drone/svt/avn_ref"
+	echo "Supported custom board based on s5p4419 : digital_cinema"
 	echo "Avaliable boot device : sdmmc/spirom"
     exit 0
 fi
@@ -35,12 +36,15 @@ if [ $1 == "s5p4418" ]; then
 				if [ $2 == "navi_ref" ]; then
 					echo ""
 		        else
-				    if [ $2 == "svt" ]; then
-				        echo ""
-				    else
-				        echo "Not supported board!"
-				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
-				        exit 0
+					if [ $2 == "navi_ref" ]; then
+						echo ""
+					    if [ $2 == "svt" ]; then
+					        echo ""
+					    else
+					        echo "Not supported board!"
+					        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref/digital_cinema"
+					        exit 0
+						fi
 					fi
 			    fi
 			fi
@@ -79,11 +83,15 @@ if [ $3 == "sdmmc" ]; then
 		if [ $2 == "navi_ref" ]; then
 			DEVNUM=0
 		else
-			DEVNUM=2
+			if [ $2 == "digital_cinema" ]; then
+				DEVNUM=0
+			else
+				DEVNUM=2
+			fi
 		fi
 	fi
 else
-	if [ $3 == "spirom" ]; then
+	if [ $3 == "spi" ]; then
 #		if [ $2 == "drone" ]; then
 #			DEVNUM=0
 #		else
@@ -100,7 +108,7 @@ else
 #		fi
 	else
 		echo "Not supported boot device!"
-		echo "Avaliable boot device : sdmmc/spirom"
+		echo "Avaliable boot device : sdmmc/spi"
 		exit 0
 	fi
 fi
@@ -128,8 +136,10 @@ RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 RAMDISK_SIZE=32768
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
-# Byte
-USERDATA_SIZE=7516192768
+
+# sudo fastboot getvar capacity.mmc.sd0
+EMMC_SIZE=7818182656
+SYSTEM_SIZE=57671680
 
 MAKE_EXT4FS=$TOOLS_DIR/bin/make_ext4fs
 NX_BINGEN=$TOOLS_DIR/bin/BOOT_BINGEN
@@ -321,7 +331,12 @@ function build_kernel_source()
 
 	pushd . > /dev/null
 	cd $KERNEL_DIR
-	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+
+    if [ -f $KERNEL_DIR/.config ]; then
+        echo ""
+	else
+		make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+	fi
 	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 
 	make ARCH=arm uImage -j8 -sw
@@ -507,7 +522,7 @@ function build_buildroot()
 	if [ -f .config ]; then
 		echo ""
 	else
-		cp -av ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
+		cp -av ../configs/br.2015.02.cortex_a9_glibc_tiny_rfs.config .config
 	fi
 	make
     check_result
@@ -524,13 +539,16 @@ function copy_app()
 
 function build_userdata()
 {
+    local emmc_size=EMMC_SIZE
+    local system_size=SYSTEM_SIZE
+    local userdata_size=$((emmc_size - system_size))
     echo ''
     echo ''
     echo '#########################################################'
     echo '#########################################################'
     echo '#'
     echo "# Make userdata image (EXT4)"
-    echo "# Image Size = ${USERDATA_SIZE}"
+    echo "# Image Size = ${userdata_size} Byte"
     echo '#########################################################'
     echo '#########################################################'
 
@@ -541,8 +559,8 @@ function build_userdata()
     fi
 
 	pushd . > /dev/null
-	echo "$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE"
-	$MAKE_EXT4FS -s -l $USERDATA_SIZE $USERDATA_IMAGE
+	echo "$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE"
+	$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE
 }
 
 function build_filesystem()
@@ -676,7 +694,11 @@ function build_filesystem()
 			if [ $BOARD_NAME == "navi_ref" ]; then
 				cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 			else
-				cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				if [ $BOARD_NAME == "digital_cinema" ]; then
+					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				else
+					cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				fi
 			fi
 		fi
 		check_result
@@ -966,6 +988,41 @@ CMD_V_UBOOT=no
 CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
+CMD_V_KERNEL_MODULE=no
+CMD_V_KERNEL_CLEAN=no
+
+CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+
+CMD_V_APPLICATION=no
+CMD_V_APPLICATION_CLEAN=no
+CMD_V_BUILDROOT=no
+CMD_V_BUILDROOT_CLEAN=no
+CMD_V_FILESYSTEM=no
+CMD_V_USERDATA=no
+
+CMD_V_SDCARD_PACKAGING=no
+CMD_V_SDCARD_SELECT_DEV=
+CMD_V_EMMC_PACKAGING=no
+CMD_V_EMMC_PACKAGING_2NDBOOT=no
+CMD_V_EMMC_PACKAGING_UBOOT=no
+CMD_V_EMMC_PACKAGING_BOOT=no
+
+CMD_V_BASE_PORTING=no
+CMD_V_NEW_BOARD=
+
+CMD_V_BUILD_ERROR=no
+CMD_V_BUILD_SEL=Not
+}
+
+function command_clean()
+{
+CMD_V_2NDBOOT=no
+CMD_V_UBOOT=no
+CMD_V_UBOOT_CLEAN=no
+
+CMD_V_KERNEL=no
+CMD_V_KERNEL_MODULE=no
 CMD_V_KERNEL_CLEAN=no
 
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
@@ -1056,7 +1113,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     62. fastboot secondboot(2ndboot)"
 		echo "     63. fastboot bootloader(u-boot)"
 		echo "     64. fastboot boot(kernel)"
-		echo "     65. fastboot system(rootfs)"
+		echo "     65. fastboot system(rootfs ramdisk)"
 		echo "     66. fastboot data(userdata)"
 		echo "     67. fastboot reboot"
 		echo " "
@@ -1068,7 +1125,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		read CMD_V_BUILD_NUM
 		case $CMD_V_BUILD_NUM in
 			#------------------------------------------------------------------------------------------------
-			1) CMD_V_2NDBOOT=yes
+			1) command_reset
+				CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
 			    CMD_V_APPLICATION=yes
@@ -1077,7 +1135,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				CMD_V_USERDATA=yes
 			    ;;
 
-				1c) CMD_V_2NDBOOT=yes
+				1c) command_reset
+					CMD_V_2NDBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
@@ -1091,46 +1150,69 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				    ;;
 
 			#------------------------------------------------------------------------------------------------
-			2) CMD_V_KERNEL=yes 
+			2)  command_reset
+				CMD_V_KERNEL=yes 
 			    CMD_V_UBOOT=yes 
 			    ;;
-				2c) CMD_V_UBOOT=yes
+				2c) command_reset
+					CMD_V_UBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes				
 					CMD_V_KERNEL=yes 
 					CMD_V_KERNEL_CLEAN=yes
 				    ;;
-				21) CMD_V_UBOOT=yes					    ;;
-				21c) CMD_V_UBOOT=yes
+				21) command_reset
+					CMD_V_UBOOT=yes
+					;;
+				21c) command_reset
+					 CMD_V_UBOOT=yes
 				     CMD_V_UBOOT_CLEAN=yes				
 				     ;;
-				22) CMD_V_KERNEL=yes 						
-					 ;;
-				22c) CMD_V_KERNEL=yes 
+				22) command_reset
+					CMD_V_KERNEL=yes 						
+					;;
+				22c) command_reset
+					 CMD_V_KERNEL=yes 
 					 CMD_V_KERNEL_CLEAN=yes
  			       	 ;;
-				23) CMD_V_2NDBOOT=yes					;;
-
-				2m)	build_kernel_current_menuconfig		;;
-				2mc)build_kernel_configuration			;;
+				23) command_reset
+					CMD_V_2NDBOOT=yes
+					;;
+				2m)	command_reset
+					build_kernel_current_menuconfig
+					;;
+				2mc) command_reset
+					 build_kernel_configuration
+					 ;;
 
 			#------------------------------------------------------------------------------------------------
-			3)	CMD_V_APPLICATION=yes					;;
-				3c) CMD_V_APPLICATION=yes
+			3)	command_reset
+				CMD_V_APPLICATION=yes
+				;;
+				3c) command_reset
+					CMD_V_APPLICATION=yes
 					CMD_V_APPLICATION_CLEAN=yes
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			4)	CMD_V_BUILDROOT=yes						;;
-				4c) CMD_V_BUILDROOT=yes
+			4)	command_reset
+				CMD_V_BUILDROOT=yes
+				;;
+				4c) command_reset
+					CMD_V_BUILDROOT=yes
 					CMD_V_BUILDROOT_CLEAN=yes
 					;;
 
 			#------------------------------------------------------------------------------------------------
-			5)	CMD_V_FILESYSTEM=yes
+			5)	command_reset
+				CMD_V_FILESYSTEM=yes
 				CMD_V_USERDATA=yes
 				;;
-				51) CMD_V_FILESYSTEM=yes				;;
-				52) CMD_V_USERDATA=yes					;;
+				51) command_reset
+					CMD_V_FILESYSTEM=yes
+					;;
+				52) command_reset
+					CMD_V_USERDATA=yes
+					;;
 				
 			#------------------------------------------------------------------------------------------------
 			6)	CMD_V_BUILD_NUM=-1
@@ -1168,7 +1250,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
 		        rm -rf CMD_V_LOG_FILE
 		        build_function_main 2>&1 | tee $CMD_V_LOG_FILE
-				command_reset
+				command_clean
 		    fi
 	done
 fi
