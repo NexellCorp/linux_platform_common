@@ -17,8 +17,8 @@ else
 	echo "Supported chipset : s5p4418/s5p6818"
     echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
     echo "Supported board based on s5p6818 : drone/svt/avn_ref"
-	echo "Supported custom board based on s5p4419 : digital_cinema"
-	echo "Avaliable boot device : sdmmc/spirom"
+    echo "Supported custom board based on s5p4419 : digital_cinema"
+    echo "Avaliable boot device : sdmmc/spirom"
     exit 0
 fi
 
@@ -58,13 +58,17 @@ else
 		    if [ $2 == "avn_ref" ]; then
 		        echo ""
 		    else
-		        if [ $2 == "svt" ]; then
-		            echo ""
-		        else
-		            echo "Not supported board!"
-		            echo "Supported board : drone/svt/avn_ref"
-		            exit 0
-		        fi
+	            if [ $2 == "avn_ref_bt" ]; then
+	                echo ""
+	            else
+			        if [ $2 == "svt" ]; then
+			            echo ""
+			        else
+			            echo "Not supported board!"
+			            echo "Supported board : drone/svt/avn_ref/avn_ref_bt"
+			            exit 0
+			        fi
+				fi
 			fi
 	    fi
 	else
@@ -162,10 +166,14 @@ CMD_V_KERNEL_CLEAN=no
 if [ $BOARD_NAME == "avn_ref" ]; then
 	CMD_V_KERNEL_MODULE=no
 else
-	if [ $BOARD_NAME == "navi_ref" ]; then
+	if [ $BOARD_NAME == "avn_ref_bt" ]; then
 		CMD_V_KERNEL_MODULE=no
 	else
-		CMD_V_KERNEL_MODULE=yes
+		if [ $BOARD_NAME == "navi_ref" ]; then
+			CMD_V_KERNEL_MODULE=no
+		else
+			CMD_V_KERNEL_MODULE=yes
+		fi
 	fi
 fi
 
@@ -522,7 +530,7 @@ function build_buildroot()
 	if [ -f .config ]; then
 		echo ""
 	else
-		cp -av ../configs/br.2015.02.cortex_a9_glibc_tiny_rfs.config .config
+		cp -av ../configs/br.2015.02.cortex_a9_vd_cinema_rfs.config .config
 	fi
 	make
     check_result
@@ -671,18 +679,22 @@ function build_filesystem()
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
 		else
-			if [ $BOARD_NAME == "navi_ref" ]; then
+			if [ $BOARD_NAME == "avn_ref_bt" ]; then
 				echo ''
 			else
-				echo ''
-				echo '# copy vpu module #'
-				cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-				check_result
+				if [ $BOARD_NAME == "navi_ref" ]; then
+					echo ''
+				else
+					echo ''
+					echo '# copy vpu module #'
+					cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+					check_result
 
-				echo ''
-		        echo '# copy 3d module #'
-		        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-		        check_result
+					echo ''
+			        echo '# copy 3d module #'
+			        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+			        check_result
+				fi
 			fi
 		fi
 
