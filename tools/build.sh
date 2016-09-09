@@ -598,6 +598,12 @@ function build_filesystem()
 			copy_app $APPLICATION_4418_DIR/audio_test audio_test
 			copy_app $APPLICATION_4418_DIR/fb_test fb_test
 			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
+
+			if [ $BOARD_NAME == 'digital_cinema' ]; then
+				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+			fi
+
 			if [ $CHIPSET_NAME == "s5p6818" ]; then
 				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
 			else
