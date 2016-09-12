@@ -152,7 +152,7 @@ SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOA
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
 
-USE_FFMPEG=yes
+USE_FFMPEG=no
 
 CMD_V_BUILD_NUM=
 
@@ -599,7 +599,7 @@ function build_filesystem()
 			copy_app $APPLICATION_4418_DIR/fb_test fb_test
 			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
 
-			if [ $BOARD_NAME == 'digital_cinema' ]; then
+			if [ $BOARD_NAME == "digital_cinema" ]; then
 				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
 				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
 				cp -av $APPLICATION_4418_DIR/vd_cinema/script/.bash_profile $FILESYSTEM_DIR/buildroot/out/rootfs/root/
@@ -1007,7 +1007,6 @@ CMD_V_UBOOT=no
 CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
 CMD_V_KERNEL_CLEAN=no
 
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
