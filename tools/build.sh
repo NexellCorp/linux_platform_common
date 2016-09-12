@@ -602,6 +602,7 @@ function build_filesystem()
 			if [ $BOARD_NAME == 'digital_cinema' ]; then
 				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
 				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+				cp -av $APPLICATION_4418_DIR/vd_cinema/script/.bash_profile $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 			fi
 
 			if [ $CHIPSET_NAME == "s5p6818" ]; then
