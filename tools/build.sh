@@ -5,7 +5,7 @@ TOP=`pwd`
 # Version information
 UBOOT_VER=2014.07
 KERNEL_VER=3.4.39
-BUILDROOT_VER=2013.11
+BUILDROOT_VER=2015.02
 
 if [ $# -ge 3 ]; then
     CHIPSET_NAME=$1
@@ -105,10 +105,22 @@ FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
 TOOLS_DIR=$TOP/platform/common/tools
 EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
+
+# Extension packages
 EXTENSION_PKG_DIR=$TOP/platform/common/fs/buildroot/fs/ext_pkg
+
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
-RAMDISK_SIZE=56320
+if [ ${BOARD_NAME} == "corona" ]; then
+	if [ ${BOOT_DEV} == "sdmmc" ]; then
+		RAMDISK_SIZE=61440
+	else
+		RAMDISK_SIZE=8192
+	fi
+else
+	RAMDISK_SIZE=32768
+fi
+
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
@@ -124,7 +136,7 @@ SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOA
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
 
-USE_FFMPEG=yes
+USE_FFMPEG=no
 
 CMD_V_BUILD_NUM=
 
@@ -243,7 +255,11 @@ function build_uboot_source()
 		pushd . > /dev/null
 		cd $UBOOT_DIR
 		make distclean
-		make ${UBOOT_CONFIG_NAME}_linux_config
+		if [ ${BOARD_NAME} == "corona" ]; then
+			make ${UBOOT_CONFIG_NAME}_linux_${BOOT_DEV}_config
+		else
+			make ${UBOOT_CONFIG_NAME}_linux_config
+		fi
 		popd > /dev/null
 	fi
 
@@ -259,13 +275,22 @@ function build_uboot_source()
 	if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
 		rm -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot
 	fi
-	echo "${UBOOT_CONFIG_NAME}_linux_config" > $RESULT_DIR/build.${CHIPSET_NAME}.uboot
+
+	if [ ${BOARD_NAME} == "corona" ]; then
+		echo "${UBOOT_CONFIG_NAME}_linux_${BOOT_DEV}_config" > $RESULT_DIR/build.${CHIPSET_NAME}.uboot
+	else
+		echo "${UBOOT_CONFIG_NAME}_linux_config" > $RESULT_DIR/build.${CHIPSET_NAME}.uboot
+	fi
 
 	sleep 1.5
 	pushd . > /dev/null
 
 	cd $UBOOT_DIR
-	make ${UBOOT_CONFIG_NAME}_linux_config
+	if [ ${BOARD_NAME} == "corona" ]; then
+		make ${UBOOT_CONFIG_NAME}_linux_${BOOT_DEV}_config
+	else
+		make ${UBOOT_CONFIG_NAME}_linux_config
+	fi
 	make -j8 -sw
 	check_result
 	
@@ -315,9 +340,18 @@ function build_kernel_source()
 	if [ -f $KERNEL_DIR/.config ]; then
 		echo ""
 	else
-		make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+		if [ ${BOARD_NAME} == "corona" ]; then
+			make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_${BOOT_DEV}_defconfig
+		else
+			make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
+		fi
 	fi
-	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
+	
+	if [ ${BOARD_NAME} == "corona" ]; then
+		echo "${KERNEL_CONFIG_NAME}_linux_${BOOT_DEV}_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
+	else
+		echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
+	fi
 
 	make ARCH=arm uImage -j8 -sw
 	check_result
@@ -473,7 +507,7 @@ function build_buildroot()
         echo '# Clean buildroot '
         echo '#'
         echo '#########################################################'
-		make clean
+		make distclean
 	fi
 
     echo ''
@@ -489,10 +523,10 @@ function build_buildroot()
 	if [ -f .config ]; then
 		echo ""
 	else
-		if [ ${BOARD_NAME} == "corona"]; then
-			cp -av ../configs/br.2013.11.cortex_a9_glibc_corona_pkg.config .config
+		if [ ${BOARD_NAME} == "corona" ]; then
+			cp -av ../configs/br.${BUILDROOT_VER}.cortex_a9_glibc_corona_pkg_${BOOT_DEV}.config .config
 		else
-			cp -av ../configs/br.2013.11.cortex_a9_glibc_tiny_rfs.config .config
+			cp -av ../configs/br.${BUILDROOT_VER}.cortex_a9_glibc_tiny_rfs.config .config
 		fi
 	fi
 	make
@@ -585,14 +619,14 @@ function build_filesystem()
 #				check_result
 #			fi
 
-            if [ $USE_FFMPEG == "yes" ]; then
-                cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-            fi
+#           if [ $USE_FFMPEG == "yes" ]; then
+#               cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+#           fi
 
-		echo ''
-		echo '# copy all libraries #'
-		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		check_result
+#		echo ''
+#		echo '# copy all libraries #'
+#		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+#		check_result
 
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
@@ -625,7 +659,7 @@ function build_filesystem()
 			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 		else
 			if [ $BOARD_NAME == "corona" ]; then
-				cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				cp -av $EXTRA_DIR/mdev.conf.${BOOT_DEV} $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 				cp -av $EXTRA_DIR/upload_wlan.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/upload_wlan.sh
 				cp -av $EXTRA_DIR/wpa_scan.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_scan.sh
 				cp -av $EXTRA_DIR/wpa_open.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_open.sh
@@ -644,9 +678,14 @@ function build_filesystem()
 		echo ''
 
 		echo ''
-		echo '# copy extension packages #'
-		cp -av $EXTENSION_PKG_DIR/* $FILESYSTEM_DIR/buildroot/out/rootfs/
-		check_result
+
+		if [ $BOARD_NAME == "corona" ]; then
+			if [ ${BOOT_DEV} == "sdmmc" ]; then
+				echo '# copy extension packages #'
+				cp -av $EXTENSION_PKG_DIR/* $FILESYSTEM_DIR/buildroot/out/rootfs/
+				check_result
+			fi
+		fi
 
 		pushd . > /dev/null
 		cd $FILESYSTEM_DIR
@@ -712,7 +751,8 @@ function build_fastboot_partmap()
 			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 			echo "flash=eeprom,0:bootloader:boot:0x10000,0x30000;" >> ${PARTMAP}
 			echo "flash=eeprom,0:kernel:raw:0x40000,0x400000;" >> ${PARTMAP}
-			echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000;" >> ${PARTMAP}
+			echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000;" >> ${PARTMAP}
+#			echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000;" >> ${PARTMAP}
 		else
 	        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 	        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
