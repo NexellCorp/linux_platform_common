@@ -1106,7 +1106,11 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		fi
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  6. eMMC Packaging(All)"
+		if [ ${BOOT_DEV} == "sdmmc" ]; then
+			echo "  6. eMMC Packaging(All)"
+		else
+			echo "  6. SPI Packaging(All)"
+		fi
 		echo "     61. fastboot partmap(partition map)"
 		echo "     62. fastboot secondboot(2ndboot)"
 		echo "     63. fastboot bootloader(u-boot)"
