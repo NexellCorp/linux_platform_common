@@ -704,12 +704,8 @@ function build_filesystem()
 		echo ''
 		echo ''
 		echo '#########################################################'
-		echo "# Copy built images"
+		echo "# Copy built ramdisk images"
 		echo '#########################################################'
-		cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
-		check_result
-		cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
-		check_result
 		cp -av ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
 		check_result
 	else
