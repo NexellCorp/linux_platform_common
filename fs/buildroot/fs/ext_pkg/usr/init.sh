@@ -22,6 +22,5 @@ busybox ifconfig p2p0 up
 mkdir -p /data
 ln -s /usr/etc/ca /data/ca
 chmod 777 /data/ca
-
-uxtest&
+ln -s /usr/etc/eci /eci
 
