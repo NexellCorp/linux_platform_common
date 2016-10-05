@@ -22,10 +22,15 @@ if [ "$mounted" = "" ]; then
         if [ -f /mnt/mmc/init.sh ]; then
             echo ""
         else
-            busybox cp /usr/init.sh /mnt/mmc/
+            busybox cp /usr/etc/.init.sh /mnt/mmc/init.sh
 		fi
         /mnt/mmc/init.sh
     fi
+
+	if [ "$MNTPATH" == "/mnt/usb" ]; then
+		sleep 3
+		/usr/etc/update_check.sh
+	fi
 else
     echo "Umount: $MNTPATH" > $LOGPATH
     umount $MNTPATH
