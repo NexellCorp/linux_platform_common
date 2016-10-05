@@ -135,6 +135,8 @@ NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${B
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
+PARTMAP_UPDATE=$RESULT_DIR/partmap_update.txt
+UPDATE_CMD=$RESULT_DIR/update_cmd.txt
 
 USE_FFMPEG=no
 
@@ -724,6 +726,16 @@ function build_fastboot_partmap()
 			rm -rf $PARTMAP
 	fi
 
+    if [ -f ${PARTMAP_UPDATE} ]; then
+            echo ""
+            rm -rf $PARTMAP_UPDATE
+    fi
+
+    if [ -f ${UPDATE_CMD} ]; then
+            echo ""
+            rm -rf $UPDATE_CMD
+    fi
+
     echo ''
     echo ''
     echo '#########################################################'
@@ -735,14 +747,26 @@ function build_fastboot_partmap()
     echo '#########################################################'
 
 	if [ $BOOT_DEV == "sdmmc" ]; then
-		# sdmmc
+		# sdmmc boot
 		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0;" >> ${PARTMAP}
+
+		# sdmmc update
+		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00:2ndboot_corona.bin;" >> ${PARTMAP_UPDATE}
+		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
+		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
+		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
+
+		# update command
+		echo "fdisk" >> ${UPDATE_CMD}
+		echo "erase all" >> ${UPDATE_CMD}
+		echo "flash all" >> ${UPDATE_CMD}
 	else
-		# spi
+		# spi boot
 		if [ $BOARD_NAME == "corona" ]; then
 			# SPI Flash Size = 16MB, Reserved : 0xFE0000 ~ 0xFFFFFF
 			echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
