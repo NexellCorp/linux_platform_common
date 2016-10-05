@@ -113,7 +113,7 @@ RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
 if [ ${BOARD_NAME} == "corona" ]; then
 	if [ ${BOOT_DEV} == "sdmmc" ]; then
-		RAMDISK_SIZE=61440
+		RAMDISK_SIZE=71680
 	else
 		RAMDISK_SIZE=8192
 	fi
@@ -591,6 +591,7 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
+			copy_app $APPLICATION_4418_DIR/reboot_update reboot_update
 #			copy_app $APPLICATION_4418_DIR/adc_test adc_test
 #			copy_app $APPLICATION_4418_DIR/audio_test audio_test
 #			copy_app $APPLICATION_4418_DIR/fb_test fb_test
