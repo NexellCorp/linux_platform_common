@@ -594,17 +594,16 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
+		if [ $BOARD_NAME == "digital_cinema" ]; then
+			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S90application $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
+			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S80library.sh $FILESYSTEM_DIR/buildroot/out/rootfs/etc/profile.d/
+		else
 			copy_app $APPLICATION_4418_DIR/adc_test adc_test
 			copy_app $APPLICATION_4418_DIR/audio_test audio_test
 			copy_app $APPLICATION_4418_DIR/fb_test fb_test
 			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
-
-			if [ $BOARD_NAME == "digital_cinema" ]; then
-				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
-				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
-				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S90application $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
-				cp -av $APPLICATION_4418_DIR/vd_cinema/script/S80library.sh $FILESYSTEM_DIR/buildroot/out/rootfs/etc/profile.d/
-			fi
 
 			if [ $CHIPSET_NAME == "s5p6818" ]; then
 				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
@@ -660,48 +659,49 @@ function build_filesystem()
 				fi
 				check_result
 			fi
-		
-		echo ''
-		echo '# copy all libraries #'
-		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-		check_result
 
-		if [ $CHIPSET_NAME == "s5p6818" ]; then
-			# Need by s5p6818 target
-			cp -av $LIBRARY_4418_DIR/lib/libnxadc.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxjpeg.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libnxnmeaparser.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-			cp -av $LIBRARY_4418_DIR/lib/libhevcdec.a $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-			check_result
-		fi
-
-		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
-		else
-			if [ $BOARD_NAME == "avn_ref_bt" ]; then
+			echo '# copy all libraries #'
+			cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			check_result
+
+			if [ $CHIPSET_NAME == "s5p6818" ]; then
+				# Need by s5p6818 target
+				cp -av $LIBRARY_4418_DIR/lib/libnxadc.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libnxaudio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libnxjpeg.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libnxnmeaparser.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libturbojpeg.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+				cp -av $LIBRARY_4418_DIR/lib/libhevcdec.a $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+				check_result
+			fi
+			
+			if [ $BOARD_NAME == "avn_ref" ]; then
 				echo ''
 			else
-				if [ $BOARD_NAME == "navi_ref" ]; then
+				if [ $BOARD_NAME == "avn_ref_bt" ]; then
 					echo ''
 				else
-					echo ''
-					echo '# copy vpu module #'
-					cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-					check_result
+					if [ $BOARD_NAME == "navi_ref" ]; then
+						echo ''
+					else
+						echo ''
+						echo '# copy vpu module #'
+						cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+						check_result
 
-					echo ''
-			        echo '# copy 3d module #'
-			        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-			        check_result
+						echo ''
+				        echo '# copy 3d module #'
+				        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+				        check_result
+					fi
 				fi
 			fi
 		fi
