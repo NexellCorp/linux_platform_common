@@ -596,7 +596,6 @@ function build_filesystem()
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
 		if [ $BOARD_NAME == "digital_cinema" ]; then
 			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S50runadb $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
-			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S51sapnetwork $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
 			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S90application $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/
 			cp -av $APPLICATION_4418_DIR/vd_cinema/script/S80library.sh $FILESYSTEM_DIR/buildroot/out/rootfs/etc/profile.d/
 		else
