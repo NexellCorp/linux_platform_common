@@ -17,7 +17,7 @@ else
 	echo "Supported chipset : s5p4418/s5p6818"
     echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
     echo "Supported board based on s5p6818 : drone/svt/avn_ref"
-    echo "Supported custom board based on s5p4419 : digital_cinema"
+    echo "Supported custom board based on s5p4418 : digital_cinema"
     echo "Avaliable boot device : sdmmc/spirom"
     exit 0
 fi
