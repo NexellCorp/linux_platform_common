@@ -138,7 +138,7 @@ PARTMAP=$RESULT_DIR/partmap.txt
 PARTMAP_UPDATE=$RESULT_DIR/partmap_update.txt
 UPDATE_CMD=$RESULT_DIR/update_cmd.txt
 
-USE_FFMPEG=no
+USE_FFMPEG=yes
 
 CMD_V_BUILD_NUM=
 
@@ -622,14 +622,14 @@ function build_filesystem()
 #				check_result
 #			fi
 
-#           if [ $USE_FFMPEG == "yes" ]; then
-#               cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-#           fi
+           if [ $USE_FFMPEG == "yes" ]; then
+               cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+           fi
 
-#		echo ''
-#		echo '# copy all libraries #'
-#		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
-#		check_result
+		echo ''
+		echo '# copy all libraries #'
+		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		check_result
 
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
