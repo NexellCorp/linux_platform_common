@@ -83,12 +83,13 @@ else
 #		if [ $2 == "drone" ]; then
 #			DEVNUM=0
 #		else
-#			if [ $2 == "lepus" ]; then
-#				DEVNUM=0
-#			else
+			if [ $2 == "lepus" ]; then
+				DEVNUM=0
+			else
 				echo "$3 is not supported in $BOARD_NAME"
+				echo "Supported board : lepus"
 				exit 0
-#			fi
+			fi
 #		fi
 	else
 		echo "Not supported boot device!"
