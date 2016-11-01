@@ -118,13 +118,13 @@ if [ ${BOARD_NAME} == "corona" ]; then
 		RAMDISK_SIZE=8192
 	fi
 else
-	RAMDISK_SIZE=32768
+	RAMDISK_SIZE=49152
 fi
 
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
-# sudo fastboot getvar capacity.mmc.sd0
+# sudo fastboot getvar capacity.mmc.0
 #EMMC_SIZE=7818182656
 EMMC_SIZE=3959422976
 SYSTEM_SIZE=62914560
