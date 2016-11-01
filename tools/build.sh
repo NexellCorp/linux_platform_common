@@ -530,7 +530,7 @@ function build_buildroot()
 	if [ -f .config ]; then
 		echo ""
 	else
-		cp -av ../configs/br.2015.02.cortex_a9_vd_cinema_rfs.config .config
+		cp -av ../configs/br.${BUILDROOT_VER}.cortex_a9_vd_cinema_rfs.config .config
 	fi
 	make
     check_result
@@ -1126,7 +1126,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     52. Userdata(EXT4)(+Make)"
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  6. eMMC Packaging(All)"
+		echo "  6. Packaging(All)"
 		echo "     61. fastboot partmap(partition map)"
 		echo "     62. fastboot secondboot(2ndboot)"
 		echo "     63. fastboot bootloader(u-boot)"
