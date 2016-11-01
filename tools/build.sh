@@ -36,7 +36,7 @@ if [ $1 == "s5p4418" ]; then
 				if [ $2 == "navi_ref" ]; then
 					echo ""
 		        else
-					if [ $2 == "navi_ref" ]; then
+					if [ $2 == "digital_cinema" ]; then
 						echo ""
 					    if [ $2 == "svt" ]; then
 					        echo ""
