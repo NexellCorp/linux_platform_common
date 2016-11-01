@@ -1237,7 +1237,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
 		        rm -rf CMD_V_LOG_FILE
 		        build_function_main 2>&1 | tee $CMD_V_LOG_FILE
-				command_reset
+				command_clean
 		    fi
 	done
 fi
