@@ -14,10 +14,10 @@ if [ $# -ge 3 ]; then
 else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
-	echo "Supported chipset : s5p4418/s5p6818"
-    echo "Supported board based on s5p4418 : lepus/drone/svt/avn_ref/navi_ref"
-    echo "Supported board based on s5p6818 : drone/svt/avn_ref/avn_ref_bt"
-	echo "Avaliable boot device : sdmmc/spirom"
+	echo "Supported chipset : s5p4418(nxp4330)/s5p6818"
+    echo "Supported board based on s5p4418 : lepus/drone/avn_ref/navi_ref"
+    echo "Supported board based on s5p6818 : drone/avn_ref/avn_ref_bt"
+	echo "Avaliable boot device : sdmmc/spi"
     exit 0
 fi
 
@@ -35,13 +35,9 @@ if [ $1 == "s5p4418" ]; then
 				if [ $2 == "navi_ref" ]; then
 					echo ""
 		        else
-				    if [ $2 == "svt" ]; then
-				        echo ""
-				    else
-				        echo "Not supported board!"
-				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
-				        exit 0
-					fi
+			        echo "Not supported board!"
+			        echo "Supported board : lepus/drone/avn_ref/navi_ref"
+			        exit 0
 			    fi
 			fi
 		fi
@@ -57,13 +53,9 @@ else
 	            if [ $2 == "avn_ref_bt" ]; then
 	                echo ""
 	            else
-			        if [ $2 == "svt" ]; then
-			            echo ""
-			        else
-			            echo "Not supported board!"
-			            echo "Supported board : drone/svt/avn_ref/avn_ref_bt"
-			            exit 0
-			        fi
+		            echo "Not supported board!"
+		            echo "Supported board : drone/avn_ref/avn_ref_bt"
+		            exit 0
 				fi
 			fi
 	    fi
@@ -94,17 +86,13 @@ else
 #			if [ $2 == "lepus" ]; then
 #				DEVNUM=0
 #			else
-				if [ $2 == "svt" ]; then
-					DEVNUM=2
-				else
-					echo "$3 is not supported in $BOARD_NAME"
-					exit 0
-				fi
+				echo "$3 is not supported in $BOARD_NAME"
+				exit 0
 #			fi
 #		fi
 	else
 		echo "Not supported boot device!"
-		echo "Avaliable boot device : sdmmc/spirom"
+		echo "Avaliable boot device : sdmmc/spi"
 		exit 0
 	fi
 fi
@@ -548,7 +536,7 @@ function build_userdata()
     echo '#########################################################'
     echo '#'
     echo "# Make userdata image (EXT4)"
-    echo "# Image Size = ${USERDATA_SIZE}"
+    echo "# Image Size = ${userdata_size}"
     echo '#########################################################'
     echo '#########################################################'
 
@@ -762,7 +750,7 @@ function build_fastboot_partmap()
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 	else
-		# spirom
+		# spi
 		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 		echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
