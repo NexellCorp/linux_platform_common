@@ -129,7 +129,7 @@ EXTRA_DIR=$TOP/platform/common/fs/buildroot/fs/extra
 RESULT_DIR=$TOP/platform/${CHIPSET_NAME}/result
 
 # Kbyte
-RAMDISK_SIZE=32768
+RAMDISK_SIZE=49152
 RAMDISK_FILE=$FILESYSTEM_DIR/buildroot/out/ramdisk.gz
 USERDATA_IMAGE=$RESULT_DIR/userdata.img
 
