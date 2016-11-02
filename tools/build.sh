@@ -327,7 +327,7 @@ function build_kernel_source()
 	fi
 	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 
-	make ARCH=arm uImage -j8 -sw
+	make ARCH=arm CROSS_COMPILE=arm-cortex_a9-linux-gnueabi- uImage -j8 -sw
 	check_result
 	popd > /dev/null
 
