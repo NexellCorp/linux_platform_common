@@ -669,11 +669,14 @@ function build_filesystem()
 					echo '# copy vpu module #'
 					cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 					check_result
-
 					echo ''
 			        echo '# copy 3d module #'
 			        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 			        check_result
+					echo ''
+					echo '# copy insmod script #'
+					cp -av $EXTRA_DIR/S60runsystem $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S60runsystem
+					check_result
 				fi
 			fi
 		fi
@@ -689,6 +692,11 @@ function build_filesystem()
 				cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 			fi
 		fi
+		check_result
+
+		echo ''
+		echo '# copy etc files #'
+		cp -av $EXTRA_DIR/S70runhdmi $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S70runhdmi
 		check_result
 		echo ''
 
