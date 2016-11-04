@@ -109,6 +109,7 @@ APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 LIBRARY_4418_DIR=$TOP/platform/s5p4418/library
 LIBRARY_6818_DIR=$TOP/platform/s5p6818/library
+SOLUTION_MEDIAPLAYER=$TOP/platform/${CHIPSET_NAME}/Solution/MediaPlayer
 
 FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
@@ -480,6 +481,13 @@ function build_application()
 	    check_result
 	fi
 
+	cd $SOLUTION_MEDIAPLAYER/apps/NxPlayerConsole
+    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
+        make clean
+    fi
+	make
+	check_result
+	
 	popd > /dev/null
 }
 
@@ -574,68 +582,75 @@ function build_filesystem()
 	fi
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
-			copy_app $APPLICATION_4418_DIR/adc_test adc_test
-			copy_app $APPLICATION_4418_DIR/audio_test audio_test
-			copy_app $APPLICATION_4418_DIR/fb_test fb_test
-			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
-			if [ $CHIPSET_NAME == "s5p6818" ]; then
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
-			else
-				copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
-			fi
+		copy_app $APPLICATION_4418_DIR/adc_test adc_test
+		copy_app $APPLICATION_4418_DIR/audio_test audio_test
+		copy_app $APPLICATION_4418_DIR/fb_test fb_test
+		copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
+		if [ $CHIPSET_NAME == "s5p6818" ]; then
+			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test_6818
+		else
+			copy_app $APPLICATION_4418_DIR/nmea_test nmea_test
+		fi
 
-			if [ $BOARD_NAME == "drone" ]; then
-				copy_app $APPLICATION_4418_DIR/spi_test spi_test
-			fi
+		if [ $BOARD_NAME == "drone" ]; then
+			copy_app $APPLICATION_4418_DIR/spi_test spi_test
+		fi
 
+		if [ $USE_FFMPEG == "yes" ]; then
+			copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+		fi
+
+		copy_app $APPLICATION_4418_DIR/vip_test vip_test
+
+		if [ $CHIPSET_NAME == "s5p4418" ]; then
 			if [ $USE_FFMPEG == "yes" ]; then
-				copy_app $APPLICATION_4418_DIR/transcoding_example trans_test2
+				copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
+				cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 			fi
-
-			copy_app $APPLICATION_4418_DIR/vip_test vip_test
-
-			if [ $CHIPSET_NAME == "s5p4418" ]; then
+		else
+			if [ $CHIPSET_NAME == "s5p6818" ]; then
 				if [ $USE_FFMPEG == "yes" ]; then
-					copy_app $APPLICATION_4418_DIR/vpu_test2 codec_tests
-					cp -av $APPLICATION_4418_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+					copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
 				fi
+				copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
+				cp -av $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+			fi
+		fi
+
+		if [ -d $APPLICATION_4418_DIR/cec_test ]; then
+			cd $APPLICATION_4418_DIR/cec_test/
+			cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+			check_result
+		fi
+
+		if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
+			cd $APPLICATION_4418_DIR/jpeg_test/
+			cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+			check_result
+		fi
+
+		if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
+			cd $APPLICATION_4418_DIR/v4l2_test/
+			if [ $CHIPSET_NAME == "s5p4418" ]; then
+				cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 			else
 				if [ $CHIPSET_NAME == "s5p6818" ]; then
-					if [ $USE_FFMPEG == "yes" ]; then
-						copy_app $APPLICATION_6818_DIR/vpu_test2 codec_tests
-					fi
-					copy_app $APPLICATION_6818_DIR/v4l2_test csi_deinterlacer_test
-					cp -av $APPLICATION_6818_DIR/vpu_test2/ffmpeg/libs/* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+					cp -av camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 				fi
 			fi
+			check_result
+		fi
 
-            if [ -d $APPLICATION_4418_DIR/cec_test ]; then
-                cd $APPLICATION_4418_DIR/cec_test/
-				cp -av cec_test cec_low_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				check_result
-			fi
+		echo "copy NxPlayerDualDisplay"
+		cp -av $SOLUTION_MEDIAPLAYER/apps/NxPlayerConsole/NxPlayerDualDisplay $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+		check_result
 
-            if [ -d $APPLICATION_4418_DIR/jpeg_test ]; then
-                cd $APPLICATION_4418_DIR/jpeg_test/
-                cp -av jpeg_dec jpeg_enc $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-                check_result
-            fi
-
-			if [ -d $APPLICATION_4418_DIR/v4l2_test ]; then
-				cd $APPLICATION_4418_DIR/v4l2_test/
-				if [ $CHIPSET_NAME == "s5p4418" ]; then
-					cp -av camera_test_4418 csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-				else
-					if [ $CHIPSET_NAME == "s5p6818" ]; then
-						cp -av camera_test csi_test decimator_test hdmi_test $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-					fi
-				fi
-				check_result
-			fi
-		
 		echo ''
 		echo '# copy all libraries #'
 		cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		check_result
+
+		cp -av $SOLUTION_MEDIAPLAYER/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 		check_result
 
 		if [ $CHIPSET_NAME == "s5p6818" ]; then
