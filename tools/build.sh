@@ -641,9 +641,11 @@ function build_filesystem()
 			check_result
 		fi
 
-		echo "copy NxPlayerDualDisplay"
-		cp -av $SOLUTION_MEDIAPLAYER/apps/NxPlayerConsole/NxPlayerDualDisplay $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
-		check_result
+		if [ -d $SOLUTION_MEDIAPLAYER/apps/NxPlayerConsole ]; then
+			echo '# copy NxPlayerDualDisplay #'
+			cp -av $SOLUTION_MEDIAPLAYER/apps/NxPlayerConsole/NxPlayerDualDisplay $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
+			check_result
+		fi
 
 		echo ''
 		echo '# copy all libraries #'
