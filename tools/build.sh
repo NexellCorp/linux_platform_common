@@ -1184,6 +1184,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
+				decide_build_kernel_module
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes
@@ -1196,6 +1197,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
 				    CMD_V_KERNEL=yes 
+					decide_build_kernel_module
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
 					CMD_V_BUILDROOT=yes
