@@ -555,7 +555,6 @@ function build_userdata()
     echo ''
     echo '#########################################################'
     echo '#########################################################'
-    echo '#'
     echo "# Make userdata image (EXT4)"
     echo "# Image Size = ${userdata_size} Byte"
     echo '#########################################################'
