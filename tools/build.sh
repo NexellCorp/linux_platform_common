@@ -540,7 +540,7 @@ function build_buildroot()
 function copy_app()
 {
 	if [ -d $1 ]; then
-		echo "# copy $1 #"
+		echo "# Copy $1 #"
 		cp -av $1/$2 $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/
 		check_result
 	fi
@@ -585,6 +585,10 @@ function build_userdata()
 		else
 			mkdir -p ${RESULT_DIR}/userdata/bin/cert
 		fi
+		echo '#########################################################'
+		echo "# Copy SAP features to the userdata"
+		echo '#########################################################'
+
 		cp -av $APPLICATION_4418_DIR/vd_cinema/script/sap_script.sh $RESULT_DIR/userdata/
 		cp -av $APPLICATION_4418_DIR/vd_cinema/lib/libnxcinema_linux.so $RESULT_DIR/userdata/lib/
 		cp -av $APPLICATION_4418_DIR/vd_cinema/apps/sap_slink_client/sap_slink_client $RESULT_DIR/userdata/bin/
@@ -685,7 +689,7 @@ function build_filesystem()
 			fi
 
 			echo ''
-			echo '# copy all libraries #'
+			echo '# Copy all libraries #'
 			cp -av $LIBRARY_DIR/lib/*.so* $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 			check_result
 
@@ -717,12 +721,12 @@ function build_filesystem()
 						echo ''
 					else
 						echo ''
-						echo '# copy vpu module #'
+						echo '# Copy vpu module #'
 						cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 						check_result
 
 						echo ''
-				        echo '# copy 3d module #'
+				        echo '# Copy 3d module #'
 				        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
 				        check_result
 					fi
@@ -731,7 +735,7 @@ function build_filesystem()
 		fi
 
 		echo ''
-		echo '# copy mdev.conf #'
+		echo '# Copy mdev.conf #'
 		if [ $BOARD_NAME == "lepus" ]; then
 			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 		else
