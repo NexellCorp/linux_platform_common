@@ -567,9 +567,33 @@ function build_userdata()
         rm -f ${USERDATA_IMAGE}
     fi
 
+	if [ -d ${RESULT_DIR}/userdata ]; then
+		echo ""
+	else
+		mkdir ${RESULT_DIR}/userdata
+	fi
+
+	if [ $BOARD_NAME == "digital_cinema" ]; then
+		if [ -d ${RESULT_DIR}/userdata/lib ]; then
+			echo ""
+		else
+			mkdir -p ${RESULT_DIR}/userdata/lib
+		fi
+
+		if [ -d ${RESULT_DIR}/userdata/bin/cert ]; then
+			echo ""
+		else
+			mkdir -p ${RESULT_DIR}/userdata/bin/cert
+		fi
+		cp -av $APPLICATION_4418_DIR/vd_cinema/script/sap_script.sh $RESULT_DIR/userdata/
+		cp -av $APPLICATION_4418_DIR/vd_cinema/lib/libnxcinema_linux.so $RESULT_DIR/userdata/lib/
+		cp -av $APPLICATION_4418_DIR/vd_cinema/apps/sap_slink_client/sap_slink_client $RESULT_DIR/userdata/bin/
+		cp -av $APPLICATION_4418_DIR/vd_cinema/script/cert/* $RESULT_DIR/userdata/bin/cert/
+	fi
+
 	pushd . > /dev/null
-	echo "$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE"
-	$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE
+	echo "$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE $RESULT_DIR/userdata"
+	$MAKE_EXT4FS -s -l $userdata_size $USERDATA_IMAGE $RESULT_DIR/userdata
 }
 
 function build_filesystem()
@@ -927,13 +951,6 @@ function build_function_main()
 	echo '#########################################################'
 	echo ""
 
-	if [ -d $RESULT_DIR ]; then
-		echo 'The result directory has already been created.'
-	else
-		echo 'Creating the result directory...'
-		mkdir $RESULT_DIR
-	fi
-
 	if [ ${CMD_V_2NDBOOT} == "yes" ]; then
 		CMD_V_BUILD_SEL="Make second boot"
 		build_2ndboot
@@ -1003,72 +1020,72 @@ function build_function_main()
 
 function command_reset()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 }
 
 function command_clean()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
+	
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
-
-CMD_V_BUILD_NUM=
+	CMD_V_BUILD_NUM=
 }
 
 function decide_build_kernel_module()
@@ -1087,6 +1104,7 @@ function decide_build_kernel_module()
 		fi
 	fi
 }
+
 ################################################################
 ##
 ## main build start
@@ -1094,8 +1112,9 @@ function decide_build_kernel_module()
 ################################################################
 
 if [ -d $RESULT_DIR ]; then
-	echo ""
+	echo 'The result directory has already been created.'
 else
+	echo 'Creating the result directory...'
 	mkdir -p $RESULT_DIR
 fi
 
