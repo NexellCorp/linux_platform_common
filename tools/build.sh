@@ -38,6 +38,7 @@ if [ $1 == "s5p4418" ]; then
 		        else
 					if [ $2 == "digital_cinema" ]; then
 						echo ""
+					else
 					    if [ $2 == "svt" ]; then
 					        echo ""
 					    else
