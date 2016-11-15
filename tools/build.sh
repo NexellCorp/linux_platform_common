@@ -1008,6 +1008,7 @@ CMD_V_UBOOT=no
 CMD_V_UBOOT_CLEAN=no
 
 CMD_V_KERNEL=no
+CMD_V_KERNEL_MODULE=no
 CMD_V_KERNEL_CLEAN=no
 
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
@@ -1070,6 +1071,22 @@ CMD_V_BUILD_SEL=Not
 CMD_V_BUILD_NUM=
 }
 
+function decide_build_kernel_module()
+{
+	if [ $BOARD_NAME == "avn_ref" ]; then
+		CMD_V_KERNEL_MODULE=no
+	else
+		if [ $BOARD_NAME == "avn_ref_bt" ]; then
+			CMD_V_KERNEL_MODULE=no
+		else
+			if [ $BOARD_NAME == "navi_ref" ]; then
+				CMD_V_KERNEL_MODULE=no
+			else
+				CMD_V_KERNEL_MODULE=yes
+			fi
+		fi
+	fi
+}
 ################################################################
 ##
 ## main build start
@@ -1170,7 +1187,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			2)  command_reset
-				CMD_V_KERNEL=yes 
+				CMD_V_KERNEL=yes
+				decide_build_kernel_module
 			    CMD_V_UBOOT=yes 
 			    ;;
 				2c) command_reset
@@ -1178,6 +1196,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					CMD_V_UBOOT_CLEAN=yes				
 					CMD_V_KERNEL=yes 
 					CMD_V_KERNEL_CLEAN=yes
+					decide_build_kernel_module
 				    ;;
 				21) command_reset
 					CMD_V_UBOOT=yes
@@ -1187,11 +1206,13 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				     CMD_V_UBOOT_CLEAN=yes				
 				     ;;
 				22) command_reset
-					CMD_V_KERNEL=yes 						
+					CMD_V_KERNEL=yes
+					decide_build_kernel_module
 					;;
 				22c) command_reset
 					 CMD_V_KERNEL=yes 
 					 CMD_V_KERNEL_CLEAN=yes
+	  				 decide_build_kernel_module
  			       	 ;;
 				23) command_reset
 					CMD_V_2NDBOOT=yes
