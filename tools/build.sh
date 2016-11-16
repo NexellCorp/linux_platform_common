@@ -272,7 +272,6 @@ function build_uboot_source()
 		pushd . > /dev/null
 		cd $UBOOT_DIR
 		make distclean
-		make ${UBOOT_CONFIG_NAME}_config
 		popd > /dev/null
 	fi
 
@@ -1185,8 +1184,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			#------------------------------------------------------------------------------------------------
 			1) command_reset
 				CMD_V_2NDBOOT=yes
-				CMD_V_UBOOT=yes	
-			    CMD_V_KERNEL=yes 
+				CMD_V_UBOOT=yes
+			    CMD_V_KERNEL=yes
 				decide_build_kernel_module
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
@@ -1199,7 +1198,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					CMD_V_UBOOT_CLEAN=yes
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
-				    CMD_V_KERNEL=yes 
+				    CMD_V_KERNEL=yes
 					decide_build_kernel_module
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
@@ -1213,12 +1212,12 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			2)  command_reset
 				CMD_V_KERNEL=yes
 				decide_build_kernel_module
-			    CMD_V_UBOOT=yes 
+			    CMD_V_UBOOT=yes
 			    ;;
 				2c) command_reset
 					CMD_V_UBOOT=yes
-					CMD_V_UBOOT_CLEAN=yes				
-					CMD_V_KERNEL=yes 
+					CMD_V_UBOOT_CLEAN=yes
+					CMD_V_KERNEL=yes
 					CMD_V_KERNEL_CLEAN=yes
 					decide_build_kernel_module
 				    ;;
@@ -1227,7 +1226,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					;;
 				21c) command_reset
 					 CMD_V_UBOOT=yes
-				     CMD_V_UBOOT_CLEAN=yes				
+				     CMD_V_UBOOT_CLEAN=yes
 				     ;;
 				22) command_reset
 					CMD_V_KERNEL=yes
@@ -1284,8 +1283,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
-				build_fastboot_system					
-				build_fastboot_userdata				
+				build_fastboot_system
+				build_fastboot_userdata
 				complete_fastboot_reboot
 				;;
 				61)	CMD_V_BUILD_NUM=-1
@@ -1308,7 +1307,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				echo ""
 				exit 0									;;
 		esac
-		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then			
+		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then
 				CMD_V_BUILD_NUM=
 			else
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
