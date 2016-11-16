@@ -218,6 +218,7 @@ function build_uboot_source()
 		echo '# Clean u-boot '
 		echo '#'
 		echo '#########################################################'
+		echo '#########################################################'
 
 		sleep 1.5
 
@@ -234,6 +235,7 @@ function build_uboot_source()
 	echo '#'
 	echo "# Build u-boot "
 	echo '#'
+	echo '#########################################################'
 	echo '#########################################################'
 
 	if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
@@ -471,6 +473,7 @@ function build_buildroot()
         echo '# Clean buildroot '
         echo '#'
         echo '#########################################################'
+        echo '#########################################################'
 		make distclean
 	fi
 
@@ -680,6 +683,62 @@ function build_filesystem()
 	fi
 }
 
+function build_burning_package()
+{
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo "# Generate "${BOARD_NAME}" burning package"
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+	if [ -d ${RESULT_DIR}/${BOARD_NAME}_burning_package ]; then
+		echo ""
+	else
+		mkdir -p ${RESULT_DIR}/${BOARD_NAME}_burning_package
+	fi
+
+	sleep 1.5
+	pushd . > /dev/null
+
+    cd $UBOOT_DIR
+
+    echo '#########################################################'
+    echo '#'
+    echo "# Build burning u-boot "
+    echo '#'
+    echo '#########################################################'
+
+	make distclean
+	make ${UBOOT_CONFIG_NAME}_linux_${BOOT_DEV}_burning_config
+    make -j8 -sw
+    check_result
+
+    cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/u-boot_burning.bin
+
+	cp -av ${PARTMAP_UPDATE} ${RESULT_DIR}/${BOARD_NAME}_burning_package/partmap_burning.txt
+	cp -av $TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_usb.txt ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+	cp -av $TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_usb.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+
+	cp -av ${RESULT_DIR}/2ndboot_${BOARD_NAME}.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+	cp -av ${RESULT_DIR}/u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+	cp -av ${RESULT_DIR}/uImage ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+	cp -av ${RESULT_DIR}/ramdisk.gz ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+	cp -av ${RESULT_DIR}/userdata.img ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+
+	cd ${RESULT_DIR}
+	if [ -f ${BOARD_NAME}_burning_package.zip ]; then
+		rm -rf ${BOARD_NAME}_burning_package.zip
+	fi
+
+	zip -r -9 ${BOARD_NAME}_burning_package.zip ${BOARD_NAME}_burning_package/
+
+    popd > /dev/null
+}
+
 function build_fastboot_partmap()
 {
 	if [ -f ${PARTMAP} ]; then
@@ -716,7 +775,7 @@ function build_fastboot_partmap()
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0;" >> ${PARTMAP}
 
 		# sdmmc update
-		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00:2ndboot_corona.bin;" >> ${PARTMAP_UPDATE}
+		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
 		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
@@ -735,6 +794,17 @@ function build_fastboot_partmap()
 			echo "flash=eeprom,0:kernel:raw:0x40000,0x400000;" >> ${PARTMAP}
 			echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000;" >> ${PARTMAP}
 #			echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000;" >> ${PARTMAP}
+
+            echo "flash=eeprom,0:2ndboot:2nd:0x0,0x40002ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP}
+            echo "flash=eeprom,0:bootloader:boot:0x10000,0x30000:u-boot.bin;" >> ${PARTMAP}
+            echo "flash=eeprom,0:kernel:raw:0x40000,0x400000:uImage;" >> ${PARTMAP}
+            echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000:ramdisk.gz;" >> ${PARTMAP}
+#           echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000:ramdisk.gz;" >> ${PARTMAP}
+
+	        # update command
+	        echo "fdisk" >> ${UPDATE_CMD}
+	        echo "erase all" >> ${UPDATE_CMD}
+	        echo "flash all" >> ${UPDATE_CMD}
 		else
 	        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 	        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
@@ -1121,6 +1191,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     67. fastboot reboot"
 		echo " "
 		echo "--------------------------------------------------------------------"
+		echo "  7. Generate burning package"
+		echo " "
+		echo "--------------------------------------------------------------------"
 		echo "  0. Exit"
 		echo "--------------------------------------------------------------------"
 
@@ -1248,6 +1321,10 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					build_fastboot_userdata				;;
 				67) CMD_V_BUILD_NUM=-1
                     complete_fastboot_reboot        	;;
+
+			#------------------------------------------------------------------------------------------------
+			7)  CMD_V_BUILD_NUM=-1
+				build_burning_package					;;
 
 			#------------------------------------------------------------------------------------------------
 			0)	CMD_V_BUILD_NUM=0
