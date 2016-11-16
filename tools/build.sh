@@ -15,40 +15,23 @@ else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
 	echo "Supported chipset : s5p4418(nxp4330)"
-    echo "Supported board based on s5p4418 : corona/lepus/drone/avn_ref/navi_ref"
+    echo "Supported board based on nxp4330 : corona"
 	echo "Avaliable boot device : sdmmc/spi"
     exit 0
 fi
 
 # Confirm chipset and board
 if [ $1 == "s5p4418" ]; then
-
 	if [ $2 == "corona" ]; then
 		echo ""
 	else
-		if [ $2 == "lepus" ]; then
-		    echo ""
-		else
-			if [ $2 == "drone" ]; then
-			    echo ""
-			else
-		        if [ $2 == "avn_ref" ]; then
-		            echo ""
-				else
-					if [ $2 == "navi_ref" ]; then
-						echo ""
-			        else
-				        echo "Not supported board!"
-				        echo "Supported board : lepus/drone/svt/avn_ref/navi_ref"
-				        exit 0
-				    fi
-				fi
-			fi
-		fi
+        echo "Not supported board!"
+        echo "Supported board : corona"
+        exit 0
 	fi
 else
 	echo "Not supported chipset!"
-	echo "Supported chipset : s5p4418/s5p6818"
+	echo "Supported chipset : s5p4418(nxp4330)"
 	exit 0
 fi
 
@@ -57,28 +40,14 @@ if [ $3 == "sdmmc" ]; then
     echo ""
 	if [ $2 == "corona" ]; then
 		DEVNUM=0
-	else
-		if [ $2 == "lepus" ]; then
-			DEVNUM=0
-		else
-			if [ $2 == "navi_ref" ]; then
-				DEVNUM=0
-			else
-				DEVNUM=2
-			fi
-		fi
 	fi
 else
 	if [ $3 == "spi" ]; then
 		if [ $2 == "corona" ]; then
 			echo ""
 		else
-			if [ $2 == "lepus" ]; then
-				DEVNUM=0
-			else
-				echo "$3 is not supported in $BOARD_NAME"
-				exit 0
-			fi
+			echo "$3 is not supported in $BOARD_NAME"
+			exit 0
 		fi
 	else
 		echo "Not supported boot device!"
@@ -96,10 +65,8 @@ KERNEL_DIR=$TOP/kernel/kernel-${KERNEL_VER}
 MODULES_DIR=$TOP/platform/${CHIPSET_NAME}/modules
 COMMON_MODULES_DIR=$TOP/platform/common/modules
 APPLICATION_4418_DIR=$TOP/platform/s5p4418/apps
-APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
 LIBRARY_4418_DIR=$TOP/platform/s5p4418/library
-LIBRARY_6818_DIR=$TOP/platform/s5p6818/library
 
 FILESYSTEM_DIR=$TOP/platform/common/fs
 BUILDROOT_DIR=$FILESYSTEM_DIR/buildroot/buildroot-${BUILDROOT_VER}
@@ -257,11 +224,6 @@ function build_uboot_source()
 		pushd . > /dev/null
 		cd $UBOOT_DIR
 		make distclean
-		if [ ${BOARD_NAME} == "corona" ]; then
-			make ${UBOOT_CONFIG_NAME}_linux_${BOOT_DEV}_config
-		else
-			make ${UBOOT_CONFIG_NAME}_linux_config
-		fi
 		popd > /dev/null
 	fi
 
@@ -553,7 +515,6 @@ function build_userdata()
     echo ''
     echo '#########################################################'
     echo '#########################################################'
-    echo '#'
     echo "# Make userdata image (EXT4)"
     echo "# Image Size = ${userdata_size} Byte"
     echo '#########################################################'
@@ -1000,72 +961,89 @@ function build_function_main()
 
 function command_reset()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 }
 
 function command_clean()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 
-CMD_V_BUILD_NUM=
+	CMD_V_BUILD_NUM=
+}
+
+function decide_build_kernel_module()
+{
+	if [ $BOARD_NAME == "avn_ref" ]; then
+	    CMD_V_KERNEL_MODULE=no
+	else
+	    if [ $BOARD_NAME == "navi_ref" ]; then
+	        CMD_V_KERNEL_MODULE=no
+	    else
+	        if [ $BOARD_NAME == "corona" ]; then
+	            CMD_V_KERNEL_MODULE=yes
+	        else
+	            CMD_V_KERNEL_MODULE=yes
+	        fi
+	    fi
+	fi
 }
 
 ################################################################
@@ -1153,7 +1131,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			1) command_reset
 				CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
-			    CMD_V_KERNEL=yes 
+			    CMD_V_KERNEL=yes
+				decide_build_kernel_module
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes
@@ -1166,6 +1145,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
 				    CMD_V_KERNEL=yes 
+					decide_build_kernel_module
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
 					CMD_V_BUILDROOT=yes
@@ -1176,43 +1156,47 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			2) command_reset
-				CMD_V_KERNEL=yes 
-			    CMD_V_UBOOT=yes 
+				CMD_V_KERNEL=yes
+				decide_build_kernel_module
+			    CMD_V_UBOOT=yes
 			    ;;
 				2c) command_reset
 					CMD_V_UBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes				
 					CMD_V_KERNEL=yes 
 					CMD_V_KERNEL_CLEAN=yes
+					decide_build_kernel_module
 				    ;;
 				21) command_reset
 					CMD_V_UBOOT=yes
 					;;
 				21c) command_reset
 					 CMD_V_UBOOT=yes
-				     CMD_V_UBOOT_CLEAN=yes				
+				     CMD_V_UBOOT_CLEAN=yes			
 				     ;;
 				22) command_reset
 					CMD_V_KERNEL=yes
 					CMD_V_KERNEL_MODULE=yes
-					 ;;
+					decide_build_kernel_module
+					;;
 				22c) command_reset
-					 CMD_V_KERNEL=yes 
+					 CMD_V_KERNEL=yes
 					 CMD_V_KERNEL_CLEAN=yes
+					 decide_build_kernel_module
  			       	 ;;
 				23) command_reset
 					CMD_V_2NDBOOT=yes
 					;;
 				2m)	command_reset
-					build_kernel_current_menuconfig		
+					build_kernel_current_menuconfig
 					;;
 				2mc) command_reset
-					 build_kernel_configuration			
+					 build_kernel_configuration
 					 ;;
 
 			#------------------------------------------------------------------------------------------------
 			3)	command_reset
-				CMD_V_APPLICATION=yes					
+				CMD_V_APPLICATION=yes
 				;;
 				3c) command_reset
 					CMD_V_APPLICATION=yes
@@ -1221,7 +1205,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			4)	command_reset
-				CMD_V_BUILDROOT=yes						
+				CMD_V_BUILDROOT=yes
 				;;
 				4c) command_reset
 					CMD_V_BUILDROOT=yes
@@ -1234,10 +1218,10 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				CMD_V_USERDATA=yes
 				;;
 				51) command_reset
-					CMD_V_FILESYSTEM=yes				
+					CMD_V_FILESYSTEM=yes
 					;;
 				52) command_reset
-					CMD_V_USERDATA=yes					
+					CMD_V_USERDATA=yes
 					;;
 				
 			#------------------------------------------------------------------------------------------------
@@ -1246,8 +1230,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
-				build_fastboot_system					
-				build_fastboot_userdata				
+				build_fastboot_system
+				build_fastboot_userdata
 				complete_fastboot_reboot
 				;;
 				61)	CMD_V_BUILD_NUM=-1
@@ -1270,7 +1254,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				echo ""
 				exit 0									;;
 		esac
-		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then			
+		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then
 				CMD_V_BUILD_NUM=
 			else
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
