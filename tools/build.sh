@@ -99,11 +99,11 @@ fi
 
 UBOOT_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
 KERNEL_CONFIG_NAME=${CHIPSET_NAME}_${BOARD_NAME}
- 
 UBOOT_DIR=$TOP/bootloader/u-boot-${UBOOT_VER}
 KERNEL_DIR=$TOP/kernel/kernel-${KERNEL_VER}
 
 MODULES_DIR=$TOP/platform/${CHIPSET_NAME}/modules
+COMMON_MODULES_DIR=$TOP/platform/common/modules
 APPLICATION_4418_DIR=$TOP/platform/s5p4418/apps
 APPLICATION_6818_DIR=$TOP/platform/s5p6818/apps
 LIBRARY_DIR=$TOP/platform/${CHIPSET_NAME}/library
@@ -132,15 +132,14 @@ NSIH_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_${B
 SECONDBOOT_FILE=$TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_${BOOT_DEV}.bin
 SECONDBOOT_OUT_FILE=$RESULT_DIR/2ndboot_${BOARD_NAME}.bin
 PARTMAP=$RESULT_DIR/partmap.txt
+PARTMAP_UPDATE=$RESULT_DIR/partmap_update.txt
 
 USE_FFMPEG=yes
 
 CMD_V_BUILD_NUM=
-
 CMD_V_2NDBOOT=no
 CMD_V_UBOOT=no
 CMD_V_UBOOT_CLEAN=no
-
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
 
@@ -330,9 +329,14 @@ function build_kernel_source()
 
 	make ARCH=arm CROSS_COMPILE=arm-cortex_a9-linux-gnueabi- uImage -j8 -sw
 	check_result
-	popd > /dev/null
 
 	cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
+
+    pushd . > /dev/null
+    cd $COMMON_MODULES_DIR/wlan/rtl8188eus
+    ./build.sh arm
+    check_result
+    popd > /dev/null
 }
 
 function build_kernel_module()
@@ -542,9 +546,8 @@ function build_userdata()
     echo ''
     echo '#########################################################'
     echo '#########################################################'
-    echo '#'
     echo "# Make userdata image (EXT4)"
-    echo "# Image Size = ${userdata_size}"
+    echo "# Image Size = ${userdata_size} Byte"
     echo '#########################################################'
     echo '#########################################################'
 
@@ -673,6 +676,15 @@ function build_filesystem()
 			check_result
 		fi
 
+		echo ''
+		echo '# copy wlan module #'
+		cp -av $COMMON_MODULES_DIR/wlan/rtl8188eus/wlan.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+		cp -av $EXTRA_DIR/upload_wlan.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/upload_wlan.sh
+		cp -av $EXTRA_DIR/wpa_scan.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_scan.sh
+		cp -av $EXTRA_DIR/wpa_open.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_open.sh
+		cp -av $EXTRA_DIR/wpa_psk.sh $FILESYSTEM_DIR/buildroot/out/rootfs/usr/bin/wpa_psk.sh
+		check_result
+
 		if [ $BOARD_NAME == "avn_ref" ]; then
 			echo ''
 		else
@@ -713,7 +725,8 @@ function build_filesystem()
 
 		echo ''
 		echo '# copy etc files #'
-		cp -av $EXTRA_DIR/S70runhdmi $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S70runhdmi
+#		cp -av $EXTRA_DIR/S70runhdmi $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S70runhdmi
+		cp -avf $EXTRA_DIR/dhcpcd-run-hooks $FILESYSTEM_DIR/buildroot/out/rootfs/libexec/dhcpcd-run-hooks
 		check_result
 		echo ''
 
@@ -736,10 +749,6 @@ function build_filesystem()
 		echo '#########################################################'
 		echo "# Copy built images"
 		echo '#########################################################'
-		cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
-		check_result
-		cp -av ${KERNEL_DIR}/arch/arm/boot/uImage ${RESULT_DIR}
-		check_result
 		cp -av ${RAMDISK_FILE} ${RESULT_DIR}/ramdisk.gz
 		check_result
 	else
@@ -750,12 +759,68 @@ function build_filesystem()
 	fi
 }
 
-function build_fastboot_partmap()
+function build_burning_package()
 {
-	if [ -f ${PARTMAP} ]; then
-			echo ""
-			rm -rf $PARTMAP
-	fi
+    echo ''
+    echo ''
+    echo '#########################################################'
+    echo '#########################################################'
+    echo '#'
+    echo "# Generate "${BOARD_NAME}" burning package"
+    echo '#'
+    echo '#########################################################'
+    echo '#########################################################'
+
+    if [ -d ${RESULT_DIR}/${BOARD_NAME}_burning_package ]; then
+        echo ""
+    else
+        mkdir -p ${RESULT_DIR}/${BOARD_NAME}_burning_package
+    fi
+
+    sleep 1.5
+    pushd . > /dev/null
+
+    cd $UBOOT_DIR
+
+    echo '#########################################################'
+    echo '#'
+    echo "# Build burning u-boot "
+    echo '#'
+    echo '#########################################################'
+
+    make distclean
+    make ${UBOOT_CONFIG_NAME}_linux_burning_config
+    make -j8 -sw
+    check_result
+
+    cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/u-boot_burning.bin
+
+    cp -av ${PARTMAP_UPDATE} ${RESULT_DIR}/${BOARD_NAME}_burning_package/partmap_burning.txt
+    cp -av $TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_usb.txt ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+    cp -av $TOP/platform/${CHIPSET_NAME}/boot/release/2ndboot/2ndboot_${BOARD_NAME}_usb.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+
+    cp -av ${RESULT_DIR}/2ndboot_${BOARD_NAME}.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+    cp -av ${RESULT_DIR}/u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+    cp -av ${RESULT_DIR}/uImage ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+    cp -av ${RESULT_DIR}/ramdisk.gz ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+    cp -av ${RESULT_DIR}/userdata.img ${RESULT_DIR}/${BOARD_NAME}_burning_package/
+
+    cd ${RESULT_DIR}
+    if [ -f ${BOARD_NAME}_burning_package.zip ]; then
+        rm -rf ${BOARD_NAME}_burning_package.zip
+    fi
+
+    zip -r -9 ${BOARD_NAME}_burning_package.zip ${BOARD_NAME}_burning_package/
+
+    popd > /dev/null
+}
+
+function build_partmap()
+{
+    if [ -f ${PARTMAP} ]; then
+            echo ""
+            rm -rf $PARTMAP
+    fi
 
     echo ''
     echo ''
@@ -767,28 +832,45 @@ function build_fastboot_partmap()
     echo '#########################################################'
     echo '#########################################################'
 
-	if [ $BOOT_DEV == "sdmmc" ]; then
-		# sdmmc
-		echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x77000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
-	else
-		# spi
-		echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
-		echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
-		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
-	fi
+    if [ $BOOT_DEV == "sdmmc" ]; then
+        # sdmmc boot
+        echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x77000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 
-	sleep 1.5
-	pushd . > /dev/null
+        # sdmmc update
+        echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
+    else
+        # spi boot
+        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
+        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
+        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
 
-	cat ${PARTMAP}
-	popd > /dev/null		
+        # spi update
+        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
+        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
+    fi
 
+    sleep 1.5
+    pushd . > /dev/null
+
+    cat ${PARTMAP}
+    popd > /dev/null
+}
+
+function build_fastboot_partmap()
+{
     echo ''
     echo ''
     echo '#########################################################'
@@ -920,11 +1002,9 @@ function build_function_main()
 	echo '#########################################################'
 	echo ""
 
-	if [ -d $RESULT_DIR ]; then
-		echo 'The result directory has already been created.'
-	else
-		echo 'Creating the result directory...'
-		mkdir $RESULT_DIR
+	if [ ${CMD_V_PARTMAP} == "yes" ]; then
+		CMD_V_BUILD_SEL="Make partmap"
+		build_partmap
 	fi
 
 	if [ ${CMD_V_2NDBOOT} == "yes" ]; then
@@ -964,8 +1044,10 @@ function build_function_main()
 	fi
 
     if [ ${CMD_V_USERDATA} == "yes" ]; then
-        CMD_V_BUILD_SEL="Make Userdata Image"
-        build_userdata
+		if [ ${BOOT_DEV} == "sdmmc" ]; then
+	        CMD_V_BUILD_SEL="Make Userdata Image"
+	        build_userdata
+		fi
     fi
 
 	if [ -d ${RESULT_DIR} ]; then
@@ -996,71 +1078,91 @@ function build_function_main()
 
 function command_reset()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_PARTMAP=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 }
 
 function command_clean()
 {
-CMD_V_2NDBOOT=no
-CMD_V_UBOOT=no
-CMD_V_UBOOT_CLEAN=no
+	CMD_V_PARTMAP=no
+	CMD_V_2NDBOOT=no
+	CMD_V_UBOOT=no
+	CMD_V_UBOOT_CLEAN=no
 
-CMD_V_KERNEL=no
-CMD_V_KERNEL_MODULE=no
-CMD_V_KERNEL_CLEAN=no
+	CMD_V_KERNEL=no
+	CMD_V_KERNEL_MODULE=no
+	CMD_V_KERNEL_CLEAN=no
 
-CMD_V_KERNEL_PROJECT_MENUCONFIG=no
-CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG=no
+	CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
-CMD_V_APPLICATION=no
-CMD_V_APPLICATION_CLEAN=no
-CMD_V_BUILDROOT=no
-CMD_V_BUILDROOT_CLEAN=no
-CMD_V_FILESYSTEM=no
-CMD_V_USERDATA=no
+	CMD_V_APPLICATION=no
+	CMD_V_APPLICATION_CLEAN=no
+	CMD_V_BUILDROOT=no
+	CMD_V_BUILDROOT_CLEAN=no
+	CMD_V_FILESYSTEM=no
+	CMD_V_USERDATA=no
 
-CMD_V_SDCARD_PACKAGING=no
-CMD_V_SDCARD_SELECT_DEV=
-CMD_V_EMMC_PACKAGING=no
-CMD_V_EMMC_PACKAGING_2NDBOOT=no
-CMD_V_EMMC_PACKAGING_UBOOT=no
-CMD_V_EMMC_PACKAGING_BOOT=no
+	CMD_V_SDCARD_PACKAGING=no
+	CMD_V_SDCARD_SELECT_DEV=
+	CMD_V_EMMC_PACKAGING=no
+	CMD_V_EMMC_PACKAGING_2NDBOOT=no
+	CMD_V_EMMC_PACKAGING_UBOOT=no
+	CMD_V_EMMC_PACKAGING_BOOT=no
 
-CMD_V_BASE_PORTING=no
-CMD_V_NEW_BOARD=
+	CMD_V_BASE_PORTING=no
+	CMD_V_NEW_BOARD=
 
-CMD_V_BUILD_ERROR=no
-CMD_V_BUILD_SEL=Not
+	CMD_V_BUILD_ERROR=no
+	CMD_V_BUILD_SEL=Not
 
-CMD_V_BUILD_NUM=
+	CMD_V_BUILD_NUM=
+}
+
+function decide_build_kernel_module()
+{
+	if [ $BOARD_NAME == "avn_ref" ]; then
+	    CMD_V_KERNEL_MODULE=no
+	else
+	    if [ $BOARD_NAME == "avn_ref_bt" ]; then
+	        CMD_V_KERNEL_MODULE=no
+	    else
+	        if [ $BOARD_NAME == "navi_ref" ]; then
+	            CMD_V_KERNEL_MODULE=no
+	        else
+	            CMD_V_KERNEL_MODULE=yes
+	        fi
+	    fi
+	fi
 }
 
 ################################################################
@@ -1070,9 +1172,10 @@ CMD_V_BUILD_NUM=
 ################################################################
 
 if [ -d $RESULT_DIR ]; then
-	echo ""
+	echo 'The result directory has already been created.'
 else
-	mkdir -p $RESULT_DIR
+	echo 'Creating the result directory...'
+	mkdir $RESULT_DIR
 fi
 
 if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
@@ -1095,24 +1198,25 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "  BOOT Device   : $BOOT_DEV"
 		echo "******************************************************************** "
 		echo "  1. ALL(+Compile)"
-		echo "     1c. Clean Build"       
+		echo "     1c. Clean Build"
 		echo " "
 		echo "--------------------------------------------------------------------"
-		echo "  2. 2ndboot+u-boot+kernel(+Build)   2c. Clean Build(All)"
+		echo "  2. 2ndboot+u-boot+kernel+partmap(+Build)   2c. Clean Build(All)"
 		echo "     21.  u-boot(+Build)		21c. u-boot(+Clean Build)"
 		echo "     22.  kernel(+Build)		22c. kernel(+Clean Build)"
-		echo "     23.  2ndboot(+Make)"       
+		echo "     23.  2ndboot(+Make)"
+		echo "     24.  partmap(+Make)"
 		echo " "
 		echo "     2m.  kernel menuconfig"
 		echo "     2mc. ${KERNEL_CONFIG_NAME}_linux_defconfig -> .config"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  3. Application+Library(+Build)"
-		echo "     3c. App+Lib(+Clean Build)"       
+		echo "     3c. App+Lib(+Clean Build)"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  4. Buildroot(+Build)"
-		echo "     4c. Buildroot(+Clean Build)"       
+		echo "     4c. Buildroot(+Clean Build)"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  5. Filesystem(All)"
@@ -1125,10 +1229,13 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "     62. fastboot secondboot(2ndboot)"
 		echo "     63. fastboot bootloader(u-boot)"
 		echo "     64. fastboot boot(kernel)"
-		echo "     65. fastboot system(rootfs)"
+		echo "     65. fastboot system(rootfs ramdisk)"
 		echo "     66. fastboot data(userdata)"
 		echo "     67. fastboot reboot"
 		echo " "
+		echo "--------------------------------------------------------------------"
+        echo "  7. Generate burning package"
+        echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  0. Exit"
 		echo "--------------------------------------------------------------------"
@@ -1139,8 +1246,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			#------------------------------------------------------------------------------------------------
 			1) command_reset
 				CMD_V_2NDBOOT=yes
-				CMD_V_UBOOT=yes	
-			    CMD_V_KERNEL=yes 
+				CMD_V_UBOOT=yes
+			    CMD_V_KERNEL=yes
+				decide_build_kernel_module
 			    CMD_V_APPLICATION=yes
 				CMD_V_BUILDROOT=yes
 			    CMD_V_FILESYSTEM=yes
@@ -1152,7 +1260,8 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 					CMD_V_UBOOT_CLEAN=yes
 				    CMD_V_UBOOT=yes
 				    CMD_V_KERNEL_CLEAN=yes
-				    CMD_V_KERNEL=yes 
+				    CMD_V_KERNEL=yes
+					decide_build_kernel_module
 				    CMD_V_APPLICATION=yes
 				    CMD_V_APPLICATION_CLEAN=yes
 					CMD_V_BUILDROOT=yes
@@ -1163,38 +1272,45 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 
 			#------------------------------------------------------------------------------------------------
 			2) command_reset
-				CMD_V_KERNEL=yes 
-			    CMD_V_UBOOT=yes 
+				CMD_V_KERNEL=yes
+				decide_build_kernel_module
+			    CMD_V_UBOOT=yes
 			    ;;
 				2c) command_reset
 					CMD_V_UBOOT=yes
-					CMD_V_UBOOT_CLEAN=yes				
-					CMD_V_KERNEL=yes 
+					CMD_V_UBOOT_CLEAN=yes
+					CMD_V_KERNEL=yes
 					CMD_V_KERNEL_CLEAN=yes
+					decide_build_kernel_module
 				    ;;
 				21) command_reset
 					CMD_V_UBOOT=yes
 					;;
 				21c) command_reset
 					 CMD_V_UBOOT=yes
-				     CMD_V_UBOOT_CLEAN=yes				
+				     CMD_V_UBOOT_CLEAN=yes
 					 ;;
 				22) command_reset
-					CMD_V_KERNEL=yes 						
+					CMD_V_KERNEL=yes
+					decide_build_kernel_module
 					;;
 				22c) command_reset
-					 CMD_V_KERNEL=yes 
+					 CMD_V_KERNEL=yes
 					 CMD_V_KERNEL_CLEAN=yes
+					 decide_build_kernel_module
  			       	 ;;
 				23) command_reset
 					CMD_V_2NDBOOT=yes
+					;;
+				24) command_reset
+					CMD_V_PARTMAP=yes
 					;;
 				2m)	command_reset
 					build_kernel_current_menuconfig
 					;;
 				2mc) command_reset
-					build_kernel_configuration
-					;;
+ 					 build_kernel_configuration
+					 ;;
 
 			#------------------------------------------------------------------------------------------------
 			3) command_reset
@@ -1225,15 +1341,15 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				52) command_reset
 					CMD_V_USERDATA=yes
 					;;
-				
+
 			#------------------------------------------------------------------------------------------------
 			6)	CMD_V_BUILD_NUM=-1
 				build_fastboot_partmap
 				build_fastboot_2ndboot
 				build_fastboot_uboot
 				build_fastboot_boot
-				build_fastboot_system					
-				build_fastboot_userdata				
+				build_fastboot_system
+				build_fastboot_userdata
 				complete_fastboot_reboot
 				;;
 				61)	CMD_V_BUILD_NUM=-1
@@ -1251,12 +1367,16 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				67) CMD_V_BUILD_NUM=-1
                     complete_fastboot_reboot        	;;
 
+            #------------------------------------------------------------------------------------------------
+            7)  CMD_V_BUILD_NUM=-1
+                build_burning_package                   ;;
+
 			#------------------------------------------------------------------------------------------------
 			0)	CMD_V_BUILD_NUM=0
 				echo ""
 				exit 0									;;
 		esac
-		    if [ ${CMD_V_BUILD_NUM} == -1 ]; then			
+			if [ ${CMD_V_BUILD_NUM} == -1 ]; then
 				CMD_V_BUILD_NUM=
 			else
 		        CMD_V_LOG_FILE=$RESULT_DIR/build.log
