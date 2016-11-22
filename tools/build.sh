@@ -116,20 +116,6 @@ CMD_V_UBOOT_CLEAN=no
 CMD_V_KERNEL=no
 CMD_V_KERNEL_CLEAN=no
 
-if [ $BOARD_NAME == "avn_ref" ]; then
-	CMD_V_KERNEL_MODULE=no
-else
-	if [ $BOARD_NAME == "navi_ref" ]; then
-		CMD_V_KERNEL_MODULE=no
-	else
-		if [ $BOARD_NAME == "corona" ]; then
-			CMD_V_KERNEL_MODULE=yes
-		else
-			CMD_V_KERNEL_MODULE=yes
-		fi
-	fi
-fi
-
 CMD_V_KERNEL_PROJECT_MENUCONFIG=no
 CMD_V_KERNEL_PROJECT_MENUCONFIG_COMPILE=no
 
@@ -649,7 +635,7 @@ function build_filesystem()
 		if [ $BOARD_NAME == "corona" ]; then
 			if [ ${BOOT_DEV} == "sdmmc" ]; then
 				echo '# copy extension packages #'
-				cp -av $EXTENSION_PKG_DIR/* $FILESYSTEM_DIR/buildroot/out/rootfs/
+				cp -afv $EXTENSION_PKG_DIR/* $FILESYSTEM_DIR/buildroot/out/rootfs/
 				check_result
 			fi
 		fi
@@ -739,7 +725,8 @@ function build_burning_package()
     popd > /dev/null
 }
 
-function build_fastboot_partmap()
+
+function build_partmap()
 {
 	if [ -f ${PARTMAP} ]; then
 			echo ""
@@ -780,11 +767,6 @@ function build_fastboot_partmap()
 		echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
 		echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
 		echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
-
-		# update command
-		echo "fdisk" >> ${UPDATE_CMD}
-		echo "erase all" >> ${UPDATE_CMD}
-		echo "flash all" >> ${UPDATE_CMD}
 	else
 		# spi boot
 		if [ $BOARD_NAME == "corona" ]; then
@@ -795,31 +777,40 @@ function build_fastboot_partmap()
 			echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000;" >> ${PARTMAP}
 #			echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000;" >> ${PARTMAP}
 
-            echo "flash=eeprom,0:2ndboot:2nd:0x0,0x40002ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP}
-            echo "flash=eeprom,0:bootloader:boot:0x10000,0x30000:u-boot.bin;" >> ${PARTMAP}
-            echo "flash=eeprom,0:kernel:raw:0x40000,0x400000:uImage;" >> ${PARTMAP}
-            echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000:ramdisk.gz;" >> ${PARTMAP}
-#           echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000:ramdisk.gz;" >> ${PARTMAP}
-
-	        # update command
-	        echo "fdisk" >> ${UPDATE_CMD}
-	        echo "erase all" >> ${UPDATE_CMD}
-	        echo "flash all" >> ${UPDATE_CMD}
+            echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
+            echo "flash=eeprom,0:bootloader:boot:0x10000,0x30000:u-boot.bin;" >> ${PARTMAP_UPDATE}
+            echo "flash=eeprom,0:kernel:raw:0x40000,0x400000:uImage;" >> ${PARTMAP_UPDATE}
+            echo "flash=eeprom,0:ramdisk:raw:0x440000,0x3C0000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+#           echo "flash=eeprom,0:ramdisk:raw:0x440000,0xBA0000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
 		else
 	        echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
 	        echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000;" >> ${PARTMAP}
 	        echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000;" >> ${PARTMAP}
 	        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000;" >> ${PARTMAP}
 	        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0;" >> ${PARTMAP}
+
+            echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
+            echo "flash=eeprom,0:bootloader:boot:0x10000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
+            echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
+            echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+            echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
 		fi
 	fi
+
+	# update command
+	echo "fdisk" >> ${UPDATE_CMD}
+	echo "erase all" >> ${UPDATE_CMD}
+	echo "flash all" >> ${UPDATE_CMD}
 
 	sleep 1.5
 	pushd . > /dev/null
 
 	cat ${PARTMAP}
 	popd > /dev/null		
+}
 
+function build_fastboot_partmap()
+{
     echo ''
     echo ''
     echo '#########################################################'
@@ -953,12 +944,10 @@ function build_function_main()
 	echo '#########################################################'
 	echo ""
 
-	if [ -d $RESULT_DIR ]; then
-		echo 'The result directory has already been created.'
-	else
-		echo 'Creating the result directory...'
-		mkdir $RESULT_DIR
-	fi
+    if [ ${CMD_V_PARTMAP} == "yes" ]; then
+        CMD_V_BUILD_SEL="Make partmap"
+        build_partmap
+    fi
 
 	if [ ${CMD_V_2NDBOOT} == "yes" ]; then
 		CMD_V_BUILD_SEL="Make second boot"
@@ -1031,6 +1020,7 @@ function build_function_main()
 
 function command_reset()
 {
+	CMD_V_PARTMAP=no
 	CMD_V_2NDBOOT=no
 	CMD_V_UBOOT=no
 	CMD_V_UBOOT_CLEAN=no
@@ -1065,6 +1055,7 @@ function command_reset()
 
 function command_clean()
 {
+	CMD_V_PARTMAP=no
 	CMD_V_2NDBOOT=no
 	CMD_V_UBOOT=no
 	CMD_V_UBOOT_CLEAN=no
@@ -1123,9 +1114,10 @@ function decide_build_kernel_module()
 ################################################################
 
 if [ -d $RESULT_DIR ]; then
-	echo ""
+	echo 'The result directory has already been created.'
 else
-	mkdir -p $RESULT_DIR
+	echo 'Creating the result directory...'
+	mkdir $RESULT_DIR
 fi
 
 if [ -f $RESULT_DIR/build.${CHIPSET_NAME}.uboot ]; then
@@ -1148,24 +1140,25 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		echo "  BOOT Device   : $BOOT_DEV"
 		echo "******************************************************************** "
 		echo "  1. ALL(+Compile)"
-		echo "     1c. Clean Build"       
+		echo "     1c. Clean Build"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  2. 2ndboot+u-boot+kernel(+Build)   2c. Clean Build(All)"
 		echo "     21.  u-boot(+Build)		21c. u-boot(+Clean Build)"
 		echo "     22.  kernel(+Build)		22c. kernel(+Clean Build)"
-		echo "     23.  2ndboot(+Make)"       
+		echo "     23.  2ndboot(+Make)"
+		echo "     24.  partmap(+Make)"
 		echo " "
 		echo "     2m.  kernel menuconfig"
 		echo "     2mc. ${KERNEL_CONFIG_NAME}_linux_defconfig -> .config"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  3. Application+Library(+Build)"
-		echo "     3c. App+Lib(+Clean Build)"       
+		echo "     3c. App+Lib(+Clean Build)"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  4. Buildroot(+Build)"
-		echo "     4c. Buildroot(+Clean Build)"       
+		echo "     4c. Buildroot(+Clean Build)"
 		echo " "
 		echo "--------------------------------------------------------------------"
 		echo "  5. Filesystem(All)"
@@ -1249,7 +1242,6 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				     ;;
 				22) command_reset
 					CMD_V_KERNEL=yes
-					CMD_V_KERNEL_MODULE=yes
 					decide_build_kernel_module
 					;;
 				22c) command_reset
@@ -1260,6 +1252,9 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 				23) command_reset
 					CMD_V_2NDBOOT=yes
 					;;
+                24) command_reset
+                    CMD_V_PARTMAP=yes
+                    ;;
 				2m)	command_reset
 					build_kernel_current_menuconfig
 					;;
