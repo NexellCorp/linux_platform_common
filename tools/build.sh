@@ -1138,6 +1138,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 		case $CMD_V_BUILD_NUM in
 			#------------------------------------------------------------------------------------------------
 			1) command_reset
+				CMD_V_PARTMAP=yes
 				CMD_V_2NDBOOT=yes
 				CMD_V_UBOOT=yes	
 			    CMD_V_KERNEL=yes 
@@ -1148,6 +1149,7 @@ if [ ${BOARD_NAME} != "build_exit" ]; then
 			    ;;
 
 				1c) command_reset
+					CMD_V_PARTMAP=yes
 					CMD_V_2NDBOOT=yes
 					CMD_V_UBOOT_CLEAN=yes
 				    CMD_V_UBOOT=yes
