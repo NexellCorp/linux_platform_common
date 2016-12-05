@@ -277,7 +277,7 @@ function build_uboot_source()
 	make ${UBOOT_CONFIG_NAME}_linux_config
 	make -j8 -sw CROSS_COMPILE=arm-cortex_a9-linux-gnueabi-
 	check_result
-	
+
 	cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}
 	popd > /dev/null
 }
@@ -347,7 +347,7 @@ function build_kernel_module()
 
 	pushd . > /dev/null
 	cd $MODULES_DIR/coda960
-	make ARCH=arm -j4 -sw
+	make ARCH=arm CROSS_COMPILE=arm-cortex_a9-linux-gnueabi- -j4 -sw
 	check_result
 	popd > /dev/null
 }
@@ -394,7 +394,7 @@ function build_kernel_configuration()
 	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
 	check_result
 
-	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel	
+	echo "${KERNEL_CONFIG_NAME}_linux_defconfig" > $RESULT_DIR/build.${CHIPSET_NAME}.kernel
 	popd > /dev/null
 }
 
@@ -409,7 +409,7 @@ function build_partial_app()
 		cd $1
 		if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 			make clean
-		fi	
+		fi
 		make -sw
 		check_result
 	fi
@@ -426,7 +426,7 @@ function build_partial_lib()
 		cd $1
 		if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
 			make clean
-		fi	
+		fi
 		make -sw
 		check_result
 		make install -sw
@@ -444,7 +444,7 @@ function build_application()
 	echo '#'
 	echo '#########################################################'
 	echo '#########################################################'
-	
+
 	sleep 1.5
 
 	pushd . > /dev/null
@@ -471,7 +471,7 @@ function build_application()
 	fi
 	make
 	check_result
-	
+
 	if [ $CHIPSET_NAME == "s5p6818" ]; then
 	    cd $APPLICATION_6818_DIR
 	    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
@@ -487,7 +487,7 @@ function build_application()
     fi
 	make
 	check_result
-	
+
 	popd > /dev/null
 }
 
@@ -803,7 +803,7 @@ function build_fastboot_partmap()
 	pushd . > /dev/null
 
 	sudo fastboot flash partmap $PARTMAP
-	popd > /dev/null		
+	popd > /dev/null
 }
 
 function build_fastboot_2ndboot()
