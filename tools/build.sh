@@ -23,25 +23,25 @@ fi
 
 # Confirm chipset and board
 if [ $1 == "s5p4418" ]; then
-	if [ $2 == "lepus" ]; then
-	    echo ""
+	if [ $2 == "lepus" ]; the
+		echo ""
 	else
 		if [ $2 == "general" ]; then
-		    echo ""
+			echo ""
 		else
 			if [ $2 == "drone" ]; then
-			    echo ""
+				echo ""
 			else
-		        if [ $2 == "avn_ref" ]; then
-		            echo ""
+				if [ $2 == "avn_ref" ]; then
+					echo ""
 				else
 					if [ $2 == "navi_ref" ]; then
 						echo ""
-			        else
-				        echo "Not supported board!"
-				        echo "Supported board : lepus/drone/avn_ref/navi_ref/general"
-				        exit 0
-				    fi
+					else
+						echo "Not supported board!"
+						echo "Supported board : lepus/drone/avn_ref/navi_ref/general"
+						exit 0
+					fi
 				fi
 			fi
 		fi
@@ -49,24 +49,24 @@ if [ $1 == "s5p4418" ]; then
 else
 	if [ $1 == "s5p6818" ]; then
 		if [ $2 == "drone" ]; then
-		    echo ""
+			echo ""
 		else
 			if [ $2 == "general" ]; then
-			    echo ""
+				echo ""
 			else
-			    if [ $2 == "avn_ref" ]; then
-			        echo ""
-			    else
-		            if [ $2 == "avn_ref_bt" ]; then
-		                echo ""
-		            else
-			            echo "Not supported board!"
-			            echo "Supported board : drone/avn_ref/avn_ref_bt/general"
-			            exit 0
+				if [ $2 == "avn_ref" ]; then
+					echo ""
+				else
+					if [ $2 == "avn_ref_bt" ]; then
+						echo ""
+					else
+						echo "Not supported board!"
+						echo "Supported board : drone/avn_ref/avn_ref_bt/general"
+						exit 0
 					fi
 				fi
 			fi
-	    fi
+		fi
 	else
 		echo "Not supported chipset!"
 		echo "Supported chipset : s5p4418/s5p6818"
@@ -816,7 +816,8 @@ function build_burning_package()
     make -j8 -sw
     check_result
 
-    cp -av ${UBOOT_DIR}/u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/u-boot_burning.bin
+    cp -av u-boot.bin ${RESULT_DIR}/${BOARD_NAME}_burning_package/u-boot_burning.bin
+	make distclean
 
     cp -av ${PARTMAP_UPDATE} ${RESULT_DIR}/${BOARD_NAME}_burning_package/partmap_burning.txt
     cp -av $TOP/platform/${CHIPSET_NAME}/boot/release/nsih/nsih_${BOARD_NAME}_usb.txt ${RESULT_DIR}/${BOARD_NAME}_burning_package/
@@ -845,6 +846,11 @@ function build_partmap()
             rm -rf $PARTMAP
     fi
 
+    if [ -f ${PARTMAP_UPDATE} ]; then
+            echo ""
+            rm -rf $PARTMAP_UPDATE
+    fi
+
     echo ''
     echo ''
     echo '#########################################################'
@@ -867,8 +873,8 @@ function build_partmap()
         echo "flash=mmc,${DEVNUM}:2ndboot:2nd:0x200,0x7E00:2ndboot_${BOARD_NAME}.bin;" >> ${PARTMAP_UPDATE}
         echo "flash=mmc,${DEVNUM}:bootloader:boot:0x8000,0x70000:u-boot.bin;" >> ${PARTMAP_UPDATE}
         echo "flash=mmc,${DEVNUM}:kernel:raw:0x100000,0x500000:uImage;" >> ${PARTMAP_UPDATE}
-        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3500000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
-        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3C00000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:ramdisk:raw:0x700000,0x3000000:ramdisk.gz;" >> ${PARTMAP_UPDATE}
+        echo "flash=mmc,${DEVNUM}:userdata:ext4:0x3700000,0x0:userdata.img;" >> ${PARTMAP_UPDATE}
     else
         # spi boot
         echo "flash=eeprom,0:2ndboot:2nd:0x0,0x4000;" >> ${PARTMAP}
