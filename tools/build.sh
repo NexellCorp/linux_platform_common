@@ -23,7 +23,7 @@ fi
 
 # Confirm chipset and board
 if [ $1 == "s5p4418" ]; then
-	if [ $2 == "lepus" ]; the
+	if [ $2 == "lepus" ]; then
 		echo ""
 	else
 		if [ $2 == "general" ]; then
