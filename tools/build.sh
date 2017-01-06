@@ -15,8 +15,8 @@ else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
 	echo "Supported chipset : s5p4418(nxp4330)/s5p6818"
-    echo "Supported board based on s5p4418 : lepus/drone/avn_ref/navi_ref"
-    echo "Supported board based on s5p6818 : drone/avn_ref/avn_ref_bt"
+    echo "Supported board based on s5p4418 : lepus/drone/avn_ref/navi_ref/general"
+    echo "Supported board based on s5p6818 : drone/avn_ref/avn_ref_bt/general"
 	echo "Avaliable boot device : sdmmc/spi"
     exit 0
 fi
@@ -26,19 +26,23 @@ if [ $1 == "s5p4418" ]; then
 	if [ $2 == "lepus" ]; then
 	    echo ""
 	else
-		if [ $2 == "drone" ]; then
+		if [ $2 == "general" ]; then
 		    echo ""
 		else
-	        if [ $2 == "avn_ref" ]; then
-	            echo ""
+			if [ $2 == "drone" ]; then
+			    echo ""
 			else
-				if [ $2 == "navi_ref" ]; then
-					echo ""
-		        else
-			        echo "Not supported board!"
-			        echo "Supported board : lepus/drone/avn_ref/navi_ref"
-			        exit 0
-			    fi
+		        if [ $2 == "avn_ref" ]; then
+		            echo ""
+				else
+					if [ $2 == "navi_ref" ]; then
+						echo ""
+			        else
+				        echo "Not supported board!"
+				        echo "Supported board : lepus/drone/avn_ref/navi_ref/general"
+				        exit 0
+				    fi
+				fi
 			fi
 		fi
 	fi
@@ -47,15 +51,19 @@ else
 		if [ $2 == "drone" ]; then
 		    echo ""
 		else
-		    if [ $2 == "avn_ref" ]; then
-		        echo ""
-		    else
-	            if [ $2 == "avn_ref_bt" ]; then
-	                echo ""
-	            else
-		            echo "Not supported board!"
-		            echo "Supported board : drone/avn_ref/avn_ref_bt"
-		            exit 0
+			if [ $2 == "general" ]; then
+			    echo ""
+			else
+			    if [ $2 == "avn_ref" ]; then
+			        echo ""
+			    else
+		            if [ $2 == "avn_ref_bt" ]; then
+		                echo ""
+		            else
+			            echo "Not supported board!"
+			            echo "Supported board : drone/avn_ref/avn_ref_bt/general"
+			            exit 0
+					fi
 				fi
 			fi
 	    fi
@@ -68,14 +76,21 @@ fi
 
 # Confirm boot device
 if [ $3 == "sdmmc" ]; then
-    echo ""
-	if [ $2 == "lepus" ]; then
-		DEVNUM=0
+	if [ $2 == "general" ]; then
+		if [ $1 == "s5p6818" ]; then
+			DEVNUM=2
+		else
+			DEVNUM=0
+		fi
 	else
-		if [ $2 == "navi_ref" ]; then
+		if [ $2 == "lepus" ]; then
 			DEVNUM=0
 		else
-			DEVNUM=2
+			if [ $2 == "navi_ref" ]; then
+				DEVNUM=0
+			else
+				DEVNUM=2
+			fi
 		fi
 	fi
 else
@@ -715,10 +730,18 @@ function build_filesystem()
 		if [ $BOARD_NAME == "lepus" ]; then
 			cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 		else
-			if [ $BOARD_NAME == "navi_ref" ]; then
-				cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+			if [ $BOARD_NAME == "general" ]; then
+				if [ $CHIPSET_NAME == "s5p6818" ]; then
+					cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				else
+					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				fi
 			else
-				cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				if [ $BOARD_NAME == "navi_ref" ]; then
+					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				else
+					cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+				fi
 			fi
 		fi
 		check_result
