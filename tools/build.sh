@@ -337,19 +337,19 @@ function build_application()
 
 	pushd . > /dev/null
 
-	cd $LIBRARY_4418_DIR/src/libnxgpio
-	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-		make clean
-	fi
-	make
-	check_result
+    cd $LIBRARY_4418_DIR/src
+    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
+        make clean
+    fi
+    make
+    check_result
 
-	cd $APPLICATION_4418_DIR/gpio_test
-	if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
-		make clean
-	fi
-	make
-	check_result
+    cd $APPLICATION_4418_DIR
+    if [ ${CMD_V_APPLICATION_CLEAN} == "yes" ]; then
+        make clean
+    fi
+    make
+    check_result
 
 	popd > /dev/null
 }
@@ -445,13 +445,30 @@ function build_filesystem()
 
 	if [ -d $FILESYSTEM_DIR/buildroot/out/rootfs ]; then
 		echo ''
-		echo '# Copy files #'
+		echo '# Copy libraries #'
 		if [ -f $LIBRARY_DIR/lib/libnxgpio.so ]; then
 			cp -av $LIBRARY_DIR/lib/libnxgpio.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
 		    check_result
 		fi
 
-		if [ -f $APPLICATION_4418_DIR/gpio_test ]; then
+		if [ -f $LIBRARY_DIR/lib/libnxpwm.so ]; then
+			cp -av $LIBRARY_DIR/lib/libnxpwm.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		    check_result
+		fi
+
+		if [ -f $LIBRARY_DIR/lib/libnxiso7816.so ]; then
+			cp -av $LIBRARY_DIR/lib/libnxiso7816.so $FILESYSTEM_DIR/buildroot/out/rootfs/usr/lib/
+		    check_result
+		fi
+
+		echo ''
+		echo '# Copy test programs #'
+		if [ -f $APPLICATION_4418_DIR/iso7816_test/iso7816_test ]; then
+			copy_app $APPLICATION_4418_DIR/iso7816_test iso7816_test
+			check_result
+		fi
+
+		if [ -f $APPLICATION_4418_DIR/gpio_test/gpio_test ]; then
 			copy_app $APPLICATION_4418_DIR/gpio_test gpio_test
 			check_result
 		fi
