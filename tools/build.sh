@@ -15,7 +15,7 @@ else
     echo "Please specify your build target information."
     echo "Usage : ./platform/common/tools/build.sh [CHIPSET_NAME] [BOARD_NAME] [BOOT_DEV]"
 	echo "Supported chipset : s5p4418(nxp4330)/s5p6818"
-    echo "Supported board based on s5p4418 : lepus/drone/avn_ref/navi_ref/general"
+    echo "Supported board based on s5p4418 : lepus/drone/avn_ref/navi_ref/svm_ref/general"
     echo "Supported board based on s5p6818 : drone/avn_ref/avn_ref_bt/general"
 	echo "Avaliable boot device : sdmmc/spi"
     exit 0
@@ -38,9 +38,13 @@ if [ $1 == "s5p4418" ]; then
 					if [ $2 == "navi_ref" ]; then
 						echo ""
 					else
-						echo "Not supported board!"
-						echo "Supported board : lepus/drone/avn_ref/navi_ref/general"
-						exit 0
+						if [ $2 == "svm_ref" ]; then
+							echo ""
+						else
+							echo "Not supported board!"
+							echo "Supported board : lepus/drone/avn_ref/navi_ref/svm_ref/general"
+							exit 0
+						fi
 					fi
 				fi
 			fi
@@ -89,7 +93,11 @@ if [ $3 == "sdmmc" ]; then
 			if [ $2 == "navi_ref" ]; then
 				DEVNUM=0
 			else
-				DEVNUM=2
+				if [ $2 == "svm_ref" ]; then
+					DEVNUM=0
+				else
+					DEVNUM=2
+				fi
 			fi
 		fi
 	fi
@@ -167,7 +175,11 @@ else
 		if [ $BOARD_NAME == "navi_ref" ]; then
 			CMD_V_KERNEL_MODULE=no
 		else
-			CMD_V_KERNEL_MODULE=yes
+			if [ $BOARD_NAME == "svm_ref" ]; then
+				CMD_V_KERNEL_MODULE=no
+			else
+				CMD_V_KERNEL_MODULE=yes
+			fi
 		fi
 	fi
 fi
@@ -410,6 +422,7 @@ function build_kernel_configuration()
 	pushd . > /dev/null
 	cd $KERNEL_DIR
 	make distclean
+	echo "${KERNEL_CONFIG_NAME}_linux_defconfig"
 	make ARCH=arm ${KERNEL_CONFIG_NAME}_linux_defconfig
 	check_result
 
@@ -709,18 +722,22 @@ function build_filesystem()
 				if [ $BOARD_NAME == "navi_ref" ]; then
 					echo ''
 				else
-					echo ''
-					echo '# copy vpu module #'
-					cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-					check_result
-					echo ''
-			        echo '# copy 3d module #'
-			        cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
-			        check_result
-					echo ''
-					echo '# copy insmod script #'
-					cp -av $EXTRA_DIR/S60runsystem $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S60runsystem
-					check_result
+					if [ $BOARD_NAME == "svm_ref" ]; then
+						echo ''
+					else
+						echo ''
+						echo '# copy vpu module #'
+						cp -av $MODULES_DIR/coda960/nx_vpu.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+						check_result
+						echo ''
+						echo '# copy 3d module #'
+						cp -av $LIBRARY_DIR/lib/vr.ko $FILESYSTEM_DIR/buildroot/out/rootfs/root/
+						check_result
+						echo ''
+						echo '# copy insmod script #'
+						cp -av $EXTRA_DIR/S60runsystem $FILESYSTEM_DIR/buildroot/out/rootfs/etc/init.d/S60runsystem
+						check_result
+					fi
 				fi
 			fi
 		fi
@@ -740,7 +757,11 @@ function build_filesystem()
 				if [ $BOARD_NAME == "navi_ref" ]; then
 					cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
 				else
-					cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+					if [ $BOARD_NAME == "svm_ref" ]; then
+						cp -av $EXTRA_DIR/mdev.conf.sd0 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+					else
+						cp -av $EXTRA_DIR/mdev.conf.sd2 $FILESYSTEM_DIR/buildroot/out/rootfs/etc/mdev.conf
+					fi
 				fi
 			fi
 		fi
@@ -1188,7 +1209,11 @@ function decide_build_kernel_module()
 	        if [ $BOARD_NAME == "navi_ref" ]; then
 	            CMD_V_KERNEL_MODULE=no
 	        else
-	            CMD_V_KERNEL_MODULE=yes
+				if [ $BOARD_NAME == "svm_ref" ]; then
+					CMD_V_KERNEL_MODULE=no
+				else
+					CMD_V_KERNEL_MODULE=yes
+				fi
 	        fi
 	    fi
 	fi
